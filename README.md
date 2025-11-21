@@ -1,2 +1,3 @@
 # TecminiAI
+ChatBot interativo desenvolvido em HTML e JavaScript, com informações da escola Etec Cônego José Bento
 
