@@ -96,6 +96,14 @@ label{
 	margin-top: 5px;
 	margin-bottom: 0px;
 }
+/* ADD KEVIN */
+.msg-erro {
+    color: #ff4d4d;
+    font-size: 14px;
+    margin-top: 10px;
+    text-align: center;
+}
+
 
 .app {
 	display: flex;

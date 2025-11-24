@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="pt-BR">
+
 <head>
     <link rel="icon" href="images/icon.png" type="image/x-icon">
     <meta charset="utf-8">
@@ -8,22 +9,46 @@
     <title>TecBot - Login</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
     <div class="div-login">
-    <form action="home/home.html" class="login">
-        <h2 class="title-login">Login</h2>
-        <label for="username">Usuário:</label>
-        <input class="input-login" type="text" id="username" name="username" required>
-        <br/>
-        <label for="password">Senha:</label>
-        <input class="input-login"  type="password" id="password" name="password" required>
-        
-        <button class="btn-login" type="submit">Entrar</button>
+        <form id="form-login" class="login">
+            <h2 class="title-login">Login</h2>
 
-        <br>
-        <a class="a-login" href="#">Não possui cadastro? Cadastre-se</a>
-    </form>
-    </div>
+            <label for="username">Usuário:</label>
+            <input class="input-login" type="text" id="username" required>
+
+            <label for="password">Senha:</label>
+            <input class="input-login" type="password" id="password" required>
+
+            <button class="btn-login" type="submit">Entrar</button>
+
+            <p id="erro-login" class="msg-erro"></p>
+
+            <a class="a-login" href="#" id="abrir-cadastro">Não possui cadastro? Cadastre-se</a>
+        </form>
+
+        <form id="form-cadastro" class="login" style="display:none;">
+            <h2 class="title-login">Cadastro</h2>
+
+            <label>Usuário:</label>
+            <input class="input-login" type="text" id="novo-usuario" required>
+
+            <label>Senha:</label>
+            <input class="input-login" type="password" id="nova-senha" required>
+
+            <label>Confirmar Senha:</label>
+            <input class="input-login" type="password" id="confirmar-senha" required>
+
+            <button class="btn-login" type="submit">Cadastrar</button>
+
+            <p id="erro-cadastro" class="msg-erro"></p>
+
+            <a class="a-login" href="#" id="voltar-login">Já possui conta? Fazer login</a>
+        </form>
+
+
+        <script src="js/login.js"></script>
 </body>
-</html>
 
+</html>
