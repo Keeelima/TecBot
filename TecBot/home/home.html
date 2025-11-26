@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <link rel="icon" href="../images/icon.png" type="image/x-icon">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Language" content="pt-BR">
+    <title>TecBot</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="app">
+        <header class="app-header">
+            <h1 class="app-title">TecBot</h1>
+            <p class="app-subtitle"></p>
+        </header>
+
+        <section class="layout">
+            <main id="chat" class="chat" role="log" aria-live="polite">
+                
+                <div id="messages" class="messages" tabindex="0" aria-label="Histórico de mensagens"></div>
+
+                
+                <form id="composer" class="composer" action="javascript:void(0);" aria-label="Enviar mensagem">
+                    <textarea id="input" class="composer-input" placeholder="Pergunte ao TecBot..." rows="1" aria-label="Campo de mensagem"></textarea>
+                    <button id="send" class="composer-send" type="submit" aria-label="Enviar mensagem">
+                        
+                        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </form>
+            </main>
+
+            <aside class="sidebar right" aria-label="Barra lateral direita">
+                <div class="sidebar-card">Ações</div>
+                <button class="sidebar-btn" aria-label="Configurações">Configurações</button>
+                <button class="sidebar-btn" aria-label="Exportar">Outros</button>
+                <button class="sidebar-btn" aria-label="Ajuda">Ajuda</button>
+                <button class="sidebar-btn" aria-label="Acessibilidade">Acessibilidade</button>
+                
+                
+                    <button class="sidebar-logout" aria-label="Sair">Sair</button>
+                </form>
+                </aside>
+        </section>
+    </div>
+
+    <noscript>Ative o JavaScript para usar o chatbot.</noscript>
+    <script src="../js/script.js" defer></script>
+    <script src="../js/API.js"></script>
+</body>
+</html>
