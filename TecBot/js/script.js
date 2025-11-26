@@ -1,3 +1,4 @@
+import { getGeminiResponse } from "./API.js";
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("composer");
   const input = document.getElementById("input");
