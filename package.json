@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "ChatBot interativo desenvolvido em HTML e JavaScript, com informações da escola Etec Cônego José Bento.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
+    "start": "node api/chat.js",
+    "dev": "vercel dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,7 +22,6 @@
   "homepage": "https://github.com/Keeelima/TecBot#readme",
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
-    "body-parser": "^2.2.1",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0"
