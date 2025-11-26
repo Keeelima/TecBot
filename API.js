@@ -1,3 +1,4 @@
+// api.js
 const API_URL = "/api/chat";
 
 export async function getGeminiResponse(pergunta) {
@@ -8,12 +9,12 @@ export async function getGeminiResponse(pergunta) {
       body: JSON.stringify({ message: pergunta }),
     });
 
-    if (!response.ok) throw new Error("Erro na resposta do servidor");
+    if (!response.ok) throw new Error("Erro no servidor");
 
     const data = await response.json();
     return data.reply;
-  } catch (error) {
-    console.error("Erro ao chamar API:", error);
+  } catch (err) {
+    console.error(err);
     return "Erro ao conectar com o servidor.";
   }
 }
