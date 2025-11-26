@@ -32,6 +32,12 @@ app.post("/api/chat", async (req, res) => {
   }
 });
 
-app.listen(3000, () => {
-  console.log("Servidor rodando em http://localhost:3000");
+const express = require("express");
+
+// Suas rotas normais
+app.get("/api/teste", (req, res) => {
+  res.json({ ok: true });
 });
+
+// IMPORTANTE → exporta o app ao invés de ouvir porta
+module.exports = app;
