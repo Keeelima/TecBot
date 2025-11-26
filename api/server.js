@@ -1,3 +1,4 @@
+// server.js
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -7,21 +8,28 @@ dotenv.config();
 
 const app = express();
 app.use(cors());
-app.use(express.json()); // <-- ESSENCIAL
+app.use(express.json()); // ESSENCIAL para receber JSON do front-end
 
+// Inicializa o Gemini AI com a API Key do Vercel
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
+// -------------------- ROTAS --------------------
+
+// Rota principal de chat
 app.post("/api/chat", async (req, res) => {
   try {
-    console.log("API KEY carregada:", process.env.GEMINI_API_KEY);
+    console.log("Mensagem recebida:", req.body.message);
+    console.log(
+      "API KEY carregada:",
+      process.env.GEMINI_API_KEY ? "SIM" : "NÃO"
+    );
 
     const userMessage = req.body.message;
     if (!userMessage) {
       return res.status(400).json({ error: "Mensagem ausente" });
     }
 
-    // GEMINI CERTO
     const result = await model.generateContent(userMessage);
     const reply = result.response.text();
 
@@ -32,12 +40,10 @@ app.post("/api/chat", async (req, res) => {
   }
 });
 
-const express = require("express");
-
-// Suas rotas normais
+// Rota de teste rápida
 app.get("/api/teste", (req, res) => {
   res.json({ ok: true });
 });
 
-// IMPORTANTE → exporta o app ao invés de ouvir porta
-module.exports = app;
+// Exporta o app para o Vercel (não usar app.listen)
+export default app;

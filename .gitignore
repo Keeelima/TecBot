@@ -33,3 +33,5 @@ Thumbs.db
 .next/
 .nuxt/
 out/
+.vercel
+.env*.local
