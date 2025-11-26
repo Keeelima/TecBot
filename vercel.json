@@ -1,23 +1,24 @@
 {
-  "version": 2,
+  "version": 3,
+  "name": "tec-bot",
   "builds": [
     {
       "src": "api/chat.js",
       "use": "@vercel/node"
-    },
-    {
-      "src": "TecBot/**/*",
-      "use": "@vercel/static"
     }
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "/api/server.js"
+      "src": "/api/chat",
+      "dest": "/api/chat.js",
+      "methods": ["POST"]
     },
     {
       "src": "/(.*)",
-      "dest": "/TecBot/$1"
+      "dest": "/home/$1"
     }
-  ]
+  ],
+  "env": {
+    "GEMINI_API_KEY": "@gemini_api_key"
+  }
 }
