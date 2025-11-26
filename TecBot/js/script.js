@@ -1,58 +1,21 @@
-<<<<<<< HEAD
-=======
 
->>>>>>> 44b97a1e1cb4f86d956ae0482d4201f58ad6bbc6
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('composer');
     const input = document.getElementById('input');
     const messages = document.getElementById('messages');
 
-<<<<<<< HEAD
-    // Adiciona mensagem ao chat
-=======
-
-    /**
-     * Adiciona uma mensagem.
-     */
->>>>>>> 44b97a1e1cb4f86d956ae0482d4201f58ad6bbc6
     const addMessage = (text, sender) => {
         const msgDiv = document.createElement('div');
         msgDiv.className = `message ${sender}`;
-        msgDiv.innerHTML = `<p>${text}</p>`;
-<<<<<<< HEAD
-=======
-
->>>>>>> 44b97a1e1cb4f86d956ae0482d4201f58ad6bbc6
+        const p = document.createElement('p');
+        p.innerText = text;
+        msgDiv.appendChild(p);
         messages.appendChild(msgDiv);
         messages.scrollTop = messages.scrollHeight;
     };
 
-<<<<<<< HEAD
-    // Envio da mensagem do usuário e resposta do bot
-    const handleSubmission = async () => {
-        const userText = input.value.trim();
-        if (!userText) return;
-
-        addMessage(userText, 'user');
-        input.value = '';
-
-        // Mensagem temporária "digitando..."
-        addMessage('Digitando...', 'assistant');
-        const typingDiv = messages.querySelector('.assistant:last-child');
-
-        // Chamada à API
-        const reply = await getGeminiResponse(userText);
-        typingDiv.querySelector('p').innerText = reply;
-
-        if (input.tagName.toLowerCase() === 'textarea') input.rows = 1;
-    };
-
-    // Eventos
-=======
-    /**
-     * Resposta Simples do Bot.
-     */
-    const getBotResponse = (userText) => {
+    // Retorna uma resposta simples (sincrona) usada quando não há API externa
+    const getBotReply = (userText) => {
         let response = 'Desculpe, não entendi. Sou uma demonstração.';
         const lowerText = userText.trim().toLowerCase();
 
@@ -62,59 +25,166 @@ document.addEventListener('DOMContentLoaded', () => {
             response = 'Estou aqui! Tente perguntar algo simples.';
         }
 
-        setTimeout(() => addMessage(response, 'assistant'), 500);
+        return response;
     };
 
-    // ---  Função de Envio Principal (Centralizada) ---
-
-    const handleSubmission = () => {
+    // Função principal de envio (usa API se disponível, senão fallback local)
+    const handleSubmission = async () => {
         const userText = input.value.trim();
+        if (!userText) return;
 
-        if (userText) {
-            addMessage(userText, 'user');
-            getBotResponse(userText);
-            
-            input.value = ''; 
-            if (input.tagName.toLowerCase() === 'textarea') {
-                input.rows = 1; 
+        addMessage(userText, 'user');
+        input.value = '';
+
+        // Mensagem temporária "digitando..."
+        addMessage('Digitando...', 'assistant');
+        const typingDiv = messages.lastElementChild;
+
+        let reply = '';
+        try {
+            if (typeof getGeminiResponse === 'function') {
+                // Se existir a função de API externa, use-a
+                reply = await getGeminiResponse(userText);
+            } else {
+                // fallback local
+                reply = getBotReply(userText);
             }
+        } catch (err) {
+            reply = 'Desculpe, ocorreu um erro ao obter a resposta.';
+            console.error('Erro ao obter resposta:', err);
         }
+
+        if (typingDiv) {
+            const p = typingDiv.querySelector('p');
+            if (p) p.innerText = reply;
+            typingDiv.className = 'message assistant';
+        } else {
+            addMessage(reply, 'assistant');
+        }
+
+        if (input.tagName.toLowerCase() === 'textarea') input.rows = 1;
     };
 
-    
-
-    //  Envio pelo botão do formulário
->>>>>>> 44b97a1e1cb4f86d956ae0482d4201f58ad6bbc6
-    form.addEventListener('submit', (event) => {
-        event.preventDefault();
-        handleSubmission();
-    });
-
-<<<<<<< HEAD
-    input.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' && !event.shiftKey) {
+    // Envio pelo botão do formulário
+    if (form) {
+        form.addEventListener('submit', (event) => {
             event.preventDefault();
             handleSubmission();
-        }
-    });
+        });
+    }
+
+    // Envio pelo Enter (sem Shift)
+    if (input) {
+        input.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                handleSubmission();
+            }
+        });
+    }
 
     // Mensagem inicial do bot
     addMessage('Olá! Eu sou o TecBot. Como posso te ajudar?', 'assistant');
-    input.focus();
+    if (input) input.focus();
+    // Inicializa tema a partir do armazenamento
+    try {
+        if (localStorage.getItem('theme') === 'light') document.body.classList.add('light');
+    } catch (e) {
+        /* ignore storage errors */
+    }
 });
-=======
-    
-    input.addEventListener('keydown', (event) => {
-        
-        if (event.key === 'Enter' && !event.shiftKey) {
-            event.preventDefault(); 
-            handleSubmission(); 
-        }
-    });
 
-    // --- . Inicialização ---
-    
-    addMessage('Olá! Eu sou o TecBot. Como posso te ajudar?', 'assistant');
-    input.focus();
-});
->>>>>>> 44b97a1e1cb4f86d956ae0482d4201f58ad6bbc6
+(function(){
+            // código de ações removido — gerenciado em home/home.html
+        })();
+
+(function(){
+            // Elementos
+            const btnConfig = document.getElementById('btn-config');
+            // garante id ao botão ajuda para seleção
+            let btnHelp = document.querySelector('.sidebar-btn[aria-label="Ajuda"]');
+            if (btnHelp && !btnHelp.id) btnHelp.id = 'btn-help';
+            btnHelp = document.getElementById('btn-help');
+
+            const panel = document.getElementById('action-panel');
+
+            if (!btnConfig || !panel) return;
+
+            // Estado: 'closed' ou 'open'
+            btnConfig.dataset.state = 'closed';
+
+            // Função para transformar o botão em ícone de voltar
+            function showBackIcon() {
+                btnConfig.dataset.state = 'open';
+                btnConfig.setAttribute('aria-label', 'Voltar');
+                btnConfig.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+            }
+
+            function showConfigLabel() {
+                btnConfig.dataset.state = 'closed';
+                btnConfig.setAttribute('aria-label', 'Configurações');
+                btnConfig.innerText = 'Configurações';
+            }
+
+            async function openActions() {
+                try {
+                    const res = await fetch('acoes.html', { cache: 'no-store' });
+                    if (!res.ok) throw new Error('fetch falhou');
+                    const text = await res.text();
+
+                    const bodyMatch = text.match(/<body[^>]*>[\s\S]*<\/body>/i);
+                    let inner = text;
+                    if (bodyMatch) {
+                        inner = bodyMatch[0].replace(/<body[^>]*>/i, '').replace(/<\/body>/i, '');
+                    }
+
+                    panel.innerHTML = inner;
+                    panel.scrollIntoView({ behavior: 'smooth' });
+
+                    // adiciona listener ao botão 'Sair' dentro do painel (quando injetado)
+                    const logoutBtn = panel.querySelector('[data-action="logout"]');
+                    if (logoutBtn) {
+                        logoutBtn.addEventListener('click', () => {
+                            // volta para a página index na raiz do projeto
+                            window.location.href = '../index.html';
+                        });
+                    }
+
+                    // listener ao botão 'Mudar tema'
+                    const themeBtn = panel.querySelector('[data-action="toggle-theme"]');
+                    if (themeBtn) {
+                        themeBtn.addEventListener('click', () => {
+                            const isLight = document.body.classList.toggle('light');
+                            try { localStorage.setItem('theme', isLight ? 'light' : 'dark'); } catch (e) {}
+                        });
+                    }
+
+                    // esconder botão Ajuda
+                    if (btnHelp) btnHelp.style.display = 'none';
+                    // mostrar voltar no lugar de configurações
+                    showBackIcon();
+                } catch (err) {
+                    // fallback: navega para a página se fetch não funcionar
+                    window.location.href = 'acoes.html';
+                }
+            }
+
+            function closeActions() {
+                panel.innerHTML = '';
+                if (btnHelp) btnHelp.style.display = '';
+                showConfigLabel();
+            }
+
+            // Clique principal: abre ou fecha conforme estado
+            btnConfig.addEventListener('click', (e) => {
+                if (btnConfig.dataset.state === 'closed') {
+                    openActions();
+                } else {
+                    closeActions();
+                }
+            });
+
+            // caso o conteúdo injetado precise de um botão de voltar interno,
+            // ele pode disparar um evento 'acoes:close' para fechar o painel
+            document.addEventListener('acoes:close', () => closeActions());
+        })();

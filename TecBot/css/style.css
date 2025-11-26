@@ -1,14 +1,28 @@
 
 :root {
 	--bg: #000000;
-	--panel: #0b1220;
-	--muted: #9aa4b2;
+	--panel: #131212;
+	--muted: #b2ae9a;
 	--primary: #b20000;
+	--primary-shadow: rgba(178,0,0,0.45);
+	--danger: #ff4d4d;
+	--danger-bg: rgba(204,17,11,0.06);
+	--danger-border: rgba(204,17,11,0.45);
 	--user-bg: #be4141;
 	--assistant-bg: #1f2937;
-	--text: #e6eef8;
+	--text: #e8f8e6;
 	--radius: 12px;
-	--border-comp: rgba(252, 3, 3, 0.493)
+	--border-comp: rgba(252, 3, 3, 0.493);
+	--card-bg: rgba(255,255,255,0.02);
+	--card-border: rgba(255,255,255,0.01);
+	--composer-bg: rgba(255,255,255,0.02);
+	--composer-border: rgba(255,255,255,0.06);
+	--composer-focus-shadow: rgba(252, 3, 3, 0.28);
+	--composer-top-border: rgba(255,255,255,0.12);
+	--scrollbar-thumb: rgba(255,0,0,0.06);
+	--hover-shadow: rgba(0,0,0,0.36);
+	--panel-shadow: rgba(0,0,0,0.35);
+	--settings-border: rgba(255,255,255,0.06);
 }
 
 
@@ -24,7 +38,7 @@ body,
 
 body {
 	margin: 0;
-	font-family:sans-serif;
+	font-family: sans-serif;
 	background: linear-gradient(180deg, var(--bg), #181717);
 	color: var(--text);
 	-webkit-font-smoothing: antialiased;
@@ -42,20 +56,20 @@ label{
 	margin-top:8px;
 	margin-bottom:15px;
 	border-radius:8px;
-	border:1px solid rgba(255, 255, 255, 0.514);
+	border:1px solid var(--composer-border);
 	font-size:1rem;
 	outline:none;
-	background-color: #7a7a7a38;
+	background-color: var(--composer-bg);
 	color: var(--text);
 }
 .login{
 	font-family:sans-serif;
 	color:var(--text);
 	-webkit-font-smoothing:antialiased;
-	background-color: #020202;
+	background-color: var(--panel);
 	padding: 70px 100px 80px;
 	border-radius: 45px;
-	box-shadow: 0 8px 14px 0px rgba(255, 255, 255, 0.349);
+	box-shadow: 0 8px 14px 0px var(--panel-shadow);
 	width: 80dvh;
 
 }
@@ -91,8 +105,8 @@ label{
 	
 }
 .btn-login:active{
-	box-shadow: inset 0 0 0 1px #b20000;
-	background-color: #000000;
+	box-shadow: inset 0 0 0 1px var(--primary);
+	background-color: var(--bg);
 	margin-top: 5px;
 	margin-bottom: 0px;
 }
@@ -182,16 +196,16 @@ label{
 }
 
 .sidebar {
-	width: 72px;
-	background: rgba(255, 255, 255, 0.02);
-	border-radius: 10px;
-	padding: 10px 8px;
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-	align-items: center;
-	text-align: center;
-	justify-content: center;
+ 	width:60px; /* reduzida 10% (de 72px -> 64.8px) */
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 10px;
+    padding: 12px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch; /* estica os botões até a largura da sidebar */
+    text-align: center;
+    justify-content: flex-start; /* alinha itens ao topo */
 }
 
 .sidebar .sidebar-card {
@@ -210,12 +224,10 @@ label{
 	color: var(--text);
 	font-size: 1.1rem;
 	cursor: pointer;
-	width: 120px;
+	width: 100%;
 	height: 40px;
 	display: block;
-	margin: 0 auto;
-	align-items: center;
-	justify-content: center;
+	margin: 6px 0;
 	border-radius: 8px;
 	text-align: center;
 }
@@ -224,22 +236,7 @@ label{
 	outline: 2px solid var(--primary);
 }
 
-/* Botão Sair (logout) */
-.sidebar-logout {
-	margin-top: auto;
-	align-self: stretch;
-	background: transparent;
-	border: 1px solid rgba(255, 255, 255, 0.06);
-	color: var(--text);
-	padding: 10px 12px;
-	border-radius: 8px;
-	cursor: pointer;
-	font-weight: 600;
-}
-
-.sidebar-logout:focus {
-	outline: 2px solid var(--primary);
-}
+/* (Botão Sair removido) */
 
 .message {
 	max-width: 600px;
@@ -299,7 +296,7 @@ label{
 	border-radius: 20px;
 	border: 1px solid rgba(255, 255, 255, 0.06);
 	background: rgba(255, 255, 255, 0.02);
-	color: var(--text);
+	color: #fff;
 	outline: none;
 	font-size: 0.95rem;
 }
@@ -363,17 +360,92 @@ textarea {
 
 /* Tema claro opcional quando o body recebe .light */
 body.light {
-	--bg: #b2b3b4;
+	--bg: #d9d9da;
 	--panel: #ffffff;
-	--muted: #556070;
-	--primary: #3b82f6;
-	--user-bg: #06b6d4;
+	--muted: #131313;
+	--primary: #b20000;
+	--user-bg: #be4141;
 	--assistant-bg: #f1f5f9;
 	--text: #0b1220;
+	--settings-border: rgba(0, 0, 0, 0.329);
 
 }
 
 /* Pequenas melohrias de acessibilidade */
 .message:focus {
 	outline: 3px solid rgba(59, 130, 246, 0.12);
+}
+
+/* ---------- Aba de Configurações (acoes.html) ---------- */
+.action-panel {
+	width: 100%;
+	padding: 10px 6px;
+}
+
+.action-panel .settings-panel {
+	background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+	border-radius: 12px;
+	padding: 22px;
+	color: var(--text);
+	box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+	max-width: 520px;
+	margin: 12px auto;
+	text-align: center;
+}
+
+.settings-header h1 {
+	margin: 0 0 6px 0;
+	font-size: 1.8rem;
+	letter-spacing: 0.5px;
+}
+
+.settings-desc {
+	margin: 0 0 14px 0;
+	color: var(--muted);
+	font-size: 0.95rem;
+}
+
+.settings-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	justify-content: center;
+	align-items: center;
+	margin: 8px 0 6px 0;
+}
+
+.settings-item {
+	appearance: none;
+	-webkit-appearance: none;
+	background: rgba(255,255,255,0.02);
+	border: 1px solid var(--settings-border);
+	color: var(--text);
+	padding: 8px 14px;
+	border-radius: 8px;
+	cursor: pointer;
+	min-width: 130px;
+	font-size: 0.95rem;
+	transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+}
+
+.settings-item:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 8px 20px rgba(0,0,0,0.36);
+	background: rgba(255,255,255,0.03);
+}
+
+.settings-item:active { transform: translateY(0); }
+
+.settings-footer { margin-top: 12px; }
+
+.settings-item.destructive {
+	border-color: rgba(204,17,11,0.45);
+	color: var(--primary);
+	background: rgba(204,17,11,0.06);
+}
+
+/* Se o painel for injetado fora da sidebar (ex.: full view), garantir responsividade */
+@media (max-width: 720px) {
+	.action-panel .settings-panel { padding: 16px; margin: 8px; }
+	.settings-item { min-width: 100px; font-size: 0.9rem; }
 }

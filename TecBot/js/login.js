@@ -15,102 +15,123 @@ function buscarUsuario() {
 const formLogin = document.getElementById("form-login");
 const erroLogin = document.getElementById("erro-login");
 
-formLogin.addEventListener("submit", function (event) {
-    event.preventDefault();
+if (formLogin) {
+    formLogin.addEventListener("submit", function (event) {
+        event.preventDefault();
 
-    const usuarioDigitado = document.getElementById("username").value;
-    const senhaDigitada = document.getElementById("password").value;
+        const usuarioDigitado = document.getElementById("username").value;
+        const senhaDigitada = document.getElementById("password").value;
 
-    const conta = buscarUsuario();
+        const conta = buscarUsuario();
 
-    // LIMPA MENSAGEM ANTERIOR
-    erroLogin.textContent = "";
+        // LIMPA MENSAGEM ANTERIOR
+        if (erroLogin) erroLogin.textContent = "";
 
-    // ERROS ESPECÍFICOS 
+        // ERROS ESPECÍFICOS 
 
-    if (!conta) {
-        erroLogin.textContent = "Nenhum usuário cadastrado. Crie uma conta primeiro.";
-        return;
-    }
+        if (!conta) {
+            if (erroLogin) erroLogin.textContent = "Nenhum usuário cadastrado. Crie uma conta primeiro.";
+            return;
+        }
 
-    if (usuarioDigitado !== conta.usuario) {
-        erroLogin.textContent = "Usuário incorreto.";
-        return;
-    }
+        if (usuarioDigitado !== conta.usuario) {
+            if (erroLogin) erroLogin.textContent = "Usuário incorreto.";
+            return;
+        }
 
-    if (senhaDigitada !== conta.senha) {
-        erroLogin.textContent = "Senha incorreta.";
-        return;
-    }
+        if (senhaDigitada !== conta.senha) {
+            if (erroLogin) erroLogin.textContent = "Senha incorreta.";
+            return;
+        }
 
-    // LOGIN OK
-    window.location.href = "home/home.html";
+        // LOGIN OK
+        window.location.href = "home/home.html";
 
-    // LIMPA CAMPOS
-    document.getElementById("username").value = "";
-    document.getElementById("password").value = "";
-});
+        // LIMPA CAMPOS
+        const u = document.getElementById("username");
+        const p = document.getElementById("password");
+        if (u) u.value = "";
+        if (p) p.value = "";
+    });
+}
 
 // TELA DE CADASTRO
 
 const formCadastro = document.getElementById("form-cadastro");
 const erroCadastro = document.getElementById("erro-cadastro");
 
-formCadastro.addEventListener("submit", function (event) {
-    event.preventDefault();
+if (formCadastro) {
+    formCadastro.addEventListener("submit", function (event) {
+        event.preventDefault();
 
-    const novoUsuario = document.getElementById("novo-usuario").value;
-    const novaSenha = document.getElementById("nova-senha").value;
-    const confirmarSenha = document.getElementById("confirmar-senha").value;
+        const novoUsuarioEl = document.getElementById("novo-usuario");
+        const novaSenhaEl = document.getElementById("nova-senha");
+        const confirmarSenhaEl = document.getElementById("confirmar-senha");
 
-    // LIMPA ERRO
-    erroCadastro.textContent = "";
+        const novoUsuario = novoUsuarioEl ? novoUsuarioEl.value : '';
+        const novaSenha = novaSenhaEl ? novaSenhaEl.value : '';
+        const confirmarSenha = confirmarSenhaEl ? confirmarSenhaEl.value : '';
 
-    //  VALIDAÇÕES 
+        // LIMPA ERRO
+        if (erroCadastro) erroCadastro.textContent = "";
 
-    if (novoUsuario.length < 3) {
-        erroCadastro.textContent = "O usuário deve ter pelo menos 3 caracteres.";
-        return;
-    }
+        //  VALIDAÇÕES 
 
-    if (novaSenha.length < 4) {
-        erroCadastro.textContent = "A senha deve ter no mínimo 4 caracteres.";
-        return;
-    }
+        if (novoUsuario.length < 3) {
+            if (erroCadastro) erroCadastro.textContent = "O usuário deve ter pelo menos 3 caracteres.";
+            return;
+        }
 
-    if (novaSenha !== confirmarSenha) {
-        erroCadastro.textContent = "As senhas não estão iguais.";
-        return;
-    }
+        if (novaSenha.length < 4) {
+            if (erroCadastro) erroCadastro.textContent = "A senha deve ter no mínimo 4 caracteres.";
+            return;
+        }
 
-    salvarUsuario(novoUsuario, novaSenha);
+        if (novaSenha !== confirmarSenha) {
+            if (erroCadastro) erroCadastro.textContent = "As senhas não estão iguais.";
+            return;
+        }
 
-    erroCadastro.style.color = "green";
-    erroCadastro.textContent = "Cadastro realizado com sucesso!";
+        salvarUsuario(novoUsuario, novaSenha);
 
-    // LIMPA CAMPOS
-    document.getElementById("novo-usuario").value = "";
-    document.getElementById("nova-senha").value = "";
-    document.getElementById("confirmar-senha").value = "";
+        if (erroCadastro) {
+            erroCadastro.style.color = "green";
+            erroCadastro.textContent = "Cadastro realizado com sucesso!";
+        }
 
-    // VOLTA AO LOGIN DEPOIS DE 1 SEGUNDO
-    setTimeout(() => {
-        formCadastro.style.display = "none";
-        formLogin.style.display = "block";
-        erroCadastro.textContent = "";
-        erroCadastro.style.color = "#ff4d4d";
-    }, 800);
-});
+        // LIMPA CAMPOS
+        if (novoUsuarioEl) novoUsuarioEl.value = "";
+        if (novaSenhaEl) novaSenhaEl.value = "";
+        if (confirmarSenhaEl) confirmarSenhaEl.value = "";
+
+        // VOLTA AO LOGIN DEPOIS DE 1 SEGUNDO
+        setTimeout(() => {
+            if (formCadastro) formCadastro.style.display = "none";
+            if (formLogin) formLogin.style.display = "block";
+            if (erroCadastro) {
+                erroCadastro.textContent = "";
+                erroCadastro.style.color = "#ff4d4d";
+            }
+        }, 800);
+    });
+}
 
 // BOTÕES DE TROCA ENTRE TELAS
-document.getElementById("abrir-cadastro").onclick = () => {
-    formLogin.style.display = "none";
-    formCadastro.style.display = "block";
-    erroLogin.textContent = "";
-};
+const abrirCadastroBtn = document.getElementById("abrir-cadastro");
+const voltarLoginBtn = document.getElementById("voltar-login");
 
-document.getElementById("voltar-login").onclick = () => {
-    formCadastro.style.display = "none";
-    formLogin.style.display = "block";
-    erroCadastro.textContent = "";
-};
+if (abrirCadastroBtn) {
+    abrirCadastroBtn.onclick = () => {
+        if (formLogin) formLogin.style.display = "none";
+        if (formCadastro) formCadastro.style.display = "block";
+        if (erroLogin) erroLogin.textContent = "";
+    };
+}
+
+if (voltarLoginBtn) {
+    voltarLoginBtn.onclick = () => {
+        if (formCadastro) formCadastro.style.display = "none";
+        if (formLogin) formLogin.style.display = "block";
+        if (erroCadastro) erroCadastro.textContent = "";
+    };
+}
