@@ -1,6 +1,4 @@
-// /api/chat.js
-// Função Serverless para Vercel: recebe POST { message }
-// Usa @google/generative-ai com modelo Gemini 1.5 para resposta de texto
+
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
@@ -37,7 +35,7 @@ export default async function handler(req, res) {
       },
     });
 
-    // Parsing robusto do retorno
+   
     const candidate = result?.response?.candidates?.[0];
     let reply = "Desculpe, não consegui gerar uma resposta.";
     if (candidate?.content?.parts?.length) {
@@ -46,7 +44,7 @@ export default async function handler(req, res) {
         .filter(Boolean)
         .join("\n");
     } else if (typeof result?.response?.text === "function") {
-      // SDK expõe response.text()
+  
       reply = await result.response.text();
     }
 
@@ -56,7 +54,7 @@ export default async function handler(req, res) {
     return res.status(200).json({ reply });
   } catch (error) {
     console.error("Erro na função /api/chat:", error);
-    // Erro de cota/chave/validação
+    
     const code = error?.status || error?.code;
     return res.status(500).json({ error: "Erro interno no servidor", details: code });
   }

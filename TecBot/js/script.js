@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
     addMessage(userText, "user");
     input.value = "";
 
-    // Mensagem "Digitando..."
+    
     addMessage("Digitando...", "assistant");
     const typingDiv = messages.lastElementChild;
 
@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Envio com Enter (sem Shift)
+  
   if (input) {
     input.addEventListener("keydown", (event) => {
       if (event.key === "Enter" && !event.shiftKey) {
@@ -81,18 +81,17 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Mensagem inicial
+  
   addMessage("Olá! Eu sou o TecBot. Como posso te ajudar?", "assistant");
   if (input) input.focus();
 
-  // Tema inicial
-  // Tema inicial agora centralizado (será aplicado por applyStoredTheme)
+  
 });
 
 /* PAINEL LATERAL DE AÇÕES */
 (function () {
   const btnConfig = document.getElementById("btn-config");
-  // guarda elementos que foram escondidos para restaurar depois
+  
   let hiddenHelpEls = [];
 
   const panel = document.getElementById("action-panel");
@@ -118,8 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function openActions() {
-    // Se o usuário abriu os arquivos diretamente (file://), o fetch falhará.
-    // Detectamos isso e mostramos instruções claras para rodar um servidor local.
+  
     if (location.protocol === 'file:') {
       try {
         panel.innerHTML = '<div class="settings-panel">'
@@ -130,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Tentar resolver caminhos relativos usando a URL base atual (mais robusto)
+
     const candidateRels = [
       "acoes.html",
       "./acoes.html",
@@ -149,11 +147,11 @@ document.addEventListener("DOMContentLoaded", () => {
           break;
         }
       } catch (err) {
-        // continua tentando outros caminhos
+        
       }
     }
 
-    // Se ainda não encontrou, tentar combinações baseadas no origin e no primeiro segmento
+    
     if (!text) {
       try {
         const origin = location.origin && location.origin !== 'null' ? location.origin : (location.protocol + '//' + location.host);
@@ -176,7 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
       } catch (e) {}
     }
     if (!text) {
-      // não navegamos; mostramos mensagem de erro no painel para manter na mesma aba
+      
       try {
         panel.innerHTML = '<div class="settings-panel"><p class="settings-desc">Não foi possível carregar as configurações. Verifique se o servidor está rodando e tente novamente.</p></div>';
         showBackIcon();
@@ -192,18 +190,16 @@ document.addEventListener("DOMContentLoaded", () => {
         .replace(/<\/body>/i, "");
     }
 
-    // Remover qualquer <script>... </script> ou <script src=...> presente no conteúdo injetado
+   
     try {
       inner = inner.replace(/<script[\s\S]*?<\/script>/gi, "");
     } catch (err) {
-      // silencioso: se regex falhar, segue sem remoção
+      
     }
     panel.innerHTML = inner;
     panel.scrollIntoView({ behavior: "smooth" });
 
-    // comportamentos de logout e toggle-theme são tratados por delegação global
-
-    // Esconde especificamente os botões dentro da sidebar (ex.: "Novo Chat", "Ajuda")
+    
     try {
       const sidebar = document.querySelector('aside.sidebar') || document.querySelector('.sidebar.right');
       const scope = sidebar || document;
@@ -230,7 +226,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function closeActions() {
     panel.innerHTML = "";
-    // restaura elementos escondidos apenas na sidebar
+    
     try {
       hiddenHelpEls.forEach((o) => {
         if (o && o.el) o.el.style.display = o.prev || '';
@@ -248,7 +244,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 })();
 
-/* Botão flutuante de acessibilidade: criado pelo JS, permanece visível até o clique em 'sair' */
+
 (function () {
   function createFloatingA11yButton() {
     if (document.getElementById("floating-accessibility")) return;
@@ -260,7 +256,7 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.className = "floating-accessibility";
 
     const img = document.createElement("img");
-    // choose image path depending on current path depth so it works from root and /home/
+    
     try {
       const p = window.location.pathname || '';
       if (p.includes('/home/') || p.endsWith('/home') || p.includes('/acoes.html')) {
@@ -271,13 +267,13 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (e) {}
     btn.appendChild(img);
 
-    // comportamento básico (nenhuma ação específica solicitada)
+   
     btn.addEventListener("click", (e) => {
-      // apenas prevenir comportamento padrão; pode ser estendido depois
+      
       e.preventDefault();
     });
 
-    // acessibilidade via teclado
+    
     btn.addEventListener("keydown", (ev) => {
       if (ev.key === "Enter" || ev.key === " ") btn.click();
     });
@@ -285,10 +281,10 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.appendChild(btn);
   }
 
-  // Delegação global para ações presentes em acoes.html ou injetadas
+  
   function setupGlobalActionHandlers() {
     document.addEventListener("click", (e) => {
-      // Normaliza o alvo: se for um nó de texto, sobe para o elemento pai
+      
       let clicked = e.target;
       if (clicked && clicked.nodeType === Node.TEXT_NODE) clicked = clicked.parentElement;
 
@@ -296,7 +292,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (logoutEl) {
         const btn = document.getElementById("floating-accessibility");
         if (btn) btn.classList.add("hidden");
-        // redireciona para a página inicial
+        
         window.location.href = "../index.html";
         return;
       }
@@ -309,7 +305,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // abrir modal de privacidade
+      
       const privacyEl = clicked && clicked.closest ? clicked.closest('[data-action="privacy"]') : null;
       if (privacyEl) {
         openPrivacyOverlay();
@@ -329,7 +325,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 })();
 
-/* Modal de acessibilidade: cria overlay, controla tamanho de fonte e persiste em localStorage */
+
 (function () {
   const STORAGE_KEY = "tecbot_font_size";
   const MIN = 12;
@@ -410,7 +406,7 @@ document.addEventListener("DOMContentLoaded", () => {
     overlay.appendChild(modal);
     document.body.appendChild(overlay);
 
-    // event handlers
+   
     btnDecrease.addEventListener("click", () => {
       const cur = getCurrentFontSize();
       setFontSize(cur - STEP);
@@ -421,12 +417,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     close.addEventListener("click", () => closeA11yOverlay());
 
-    // close overlay when clicking outside modal
+   
     overlay.addEventListener("click", (e) => {
       if (e.target === overlay) closeA11yOverlay();
     });
 
-    // keyboard: Esc closes
     document.addEventListener("keydown", function onKey(e) {
       if (e.key === "Escape") {
         closeA11yOverlay();
@@ -439,7 +434,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const overlay = document.getElementById("a11y-overlay");
     if (!overlay) return;
     overlay.classList.add("open");
-    // focus primeiro botão
+ 
     const firstBtn = overlay.querySelector(".a11y-btn");
     if (firstBtn) firstBtn.focus();
   }
@@ -448,13 +443,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const overlay = document.getElementById("a11y-overlay");
     if (!overlay) return;
     overlay.classList.remove("open");
-    // remove do DOM após transição curta
+  
     setTimeout(() => {
       if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
     }, 180);
   }
 
-  // ligar ao botão flutuante
+  
   function attachFloatingToOpen() {
     const floatBtn = document.getElementById("floating-accessibility");
     if (!floatBtn) return;
@@ -464,7 +459,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // aplicar valor salvo no carregamento
+
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => {
       applyStoredFont();
@@ -477,7 +472,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 })();
 
-// Theme helpers: centralize theme set/read so it persists across pages like accessibility
+
 (function(){
   const THEME_KEY = 'theme';
 
@@ -497,11 +492,11 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch(e) {}
   }
 
-  // expose
+
   window.setTheme = setTheme;
   window.applyStoredTheme = applyStoredTheme;
 
-  // apply immediately when script loads (if body exists) or on DOMContentLoaded
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', applyStoredTheme);
   } else {
@@ -509,7 +504,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 })();
 
-/* Modal de Privacidade e Segurança */
+
 (function () {
   function closeExistingPrivacy() {
     const ex = document.getElementById("privacy-overlay");
@@ -520,7 +515,7 @@ document.addEventListener("DOMContentLoaded", () => {
     closeExistingPrivacy();
     const overlay = document.createElement("div");
     overlay.id = "privacy-overlay";
-    overlay.className = "a11y-overlay open"; // reuse overlay styles
+    overlay.className = "a11y-overlay open"; 
 
     const wrapper = document.createElement("div");
     wrapper.className = "privacy-modal";
@@ -546,7 +541,6 @@ document.addEventListener("DOMContentLoaded", () => {
     overlay.appendChild(wrapper);
     document.body.appendChild(overlay);
 
-    // close handlers
     close.addEventListener("click", () => {
       if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
     });
@@ -561,7 +555,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // expose to outer scope so delegation can call it
+ 
   window.openPrivacyOverlay = openPrivacyOverlay;
 
 })();

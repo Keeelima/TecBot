@@ -1,5 +1,5 @@
-// API.js
-const API_URL = "/api/chat"; // relativo, funciona local e no Vercel
+
+const API_URL = "/api/chat"; 
 
 export async function getGeminiResponse(pergunta) {
   try {
@@ -14,7 +14,7 @@ export async function getGeminiResponse(pergunta) {
     }
 
     const data = await response.json();
-    return data.reply; // o server envia { reply: "texto" }
+    return data.reply; 
   } catch (err) {
     console.error("Erro ao chamar API:", err);
     return "Erro ao conectar com o servidor.";
