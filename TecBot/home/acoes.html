@@ -17,29 +17,15 @@
 
         <section class="settings-list" aria-label="Opções de configurações">
             <button class="settings-item" data-action="toggle-theme" type="button">Mudar tema</button>
-            <button class="settings-item" data-action="notifications" type="button">Notificações</button>
             <button class="settings-item" data-action="privacy" type="button">Privacidade e segurança</button>
-            <button class="settings-item" data-action="sync" type="button">Sincronizar dados</button>
-            <button class="settings-item" data-action="clear-cache" type="button">Limpar cache</button>
+            
         </section>
 
         <footer class="settings-footer">
             <button class="settings-item destructive" data-action="logout" type="button">Sair</button>
         </footer>
     </main>
-        <script>
-            // Quando a página for aberta diretamente (não injetada), ligar o botão Sair
-            document.addEventListener('DOMContentLoaded', () => {
-                const logout = document.querySelector('[data-action="logout"]');
-                if (logout) logout.addEventListener('click', () => {
-                    window.location.href = '../index.html';
-                });
-                const themeBtn = document.querySelector('[data-action="toggle-theme"]');
-                if (themeBtn) themeBtn.addEventListener('click', () => {
-                    const isLight = document.body.classList.toggle('light');
-                    try { localStorage.setItem('theme', isLight ? 'light' : 'dark'); } catch (e) {}
-                });
-            });
-        </script>
+        <!-- Handlers are in `js/script.js`. Include the main script so this page works when opened directly -->
+        <script src="../js/script.js"></script>
 </body>
 </html>
