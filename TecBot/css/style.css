@@ -111,7 +111,7 @@ label{
 	margin-top: 5px;
 	margin-bottom: 0px;
 }
-/* ADD KEVIN */
+
 .msg-erro {
     color: #ff4d4d;
     font-size: 14px;
@@ -149,7 +149,7 @@ label{
 	color: var(--muted);
 }
 
-/* Área de chat central */
+
 .chat {
 	flex: 1 1 auto;
 	display: flex;
@@ -171,7 +171,7 @@ label{
 	background: transparent;
 }
 
-/* Layout que contém sidebars e chat central */
+
 .layout {
 	display: flex;
 	gap: 16px;
@@ -181,7 +181,7 @@ label{
 	margin-top: -64px;
 }
 
-/*Coluna do chat*/
+
 .chat {
 	flex: 0 0 70%;
 	display: flex;
@@ -197,16 +197,16 @@ label{
 }
 
 .sidebar {
- 	width:60px; /* reduzida 10% (de 72px -> 64.8px) */
+ 	width:60px; 
     background: rgba(255, 255, 255, 0.02);
     border-radius: 10px;
     padding: 12px 8px;
     display: flex;
     flex-direction: column;
     gap: 8px;
-    align-items: stretch; /* estica os botões até a largura da sidebar */
+    align-items: stretch; 
     text-align: center;
-    justify-content: flex-start; /* alinha itens ao topo */
+    justify-content: flex-start; 
 }
 
 .sidebar .sidebar-card {
@@ -237,7 +237,7 @@ label{
 	outline: 2px solid var(--primary);
 }
 
-/* (Botão Sair removido) */
+
 
 .message {
 	max-width: 600px;
@@ -276,7 +276,7 @@ label{
 }
 
 
-/* Composer (barra de escrever fixa de baixo) */
+
 .composer {
 	display: flex;
 	gap: 8px;
@@ -359,7 +359,7 @@ textarea {
 
 
 
-/* Tema claro opcional quando o body recebe .light */
+
 body.light {
 	--bg: #d9d9da;
 	--panel: #a3a2a2;
@@ -374,12 +374,12 @@ body.light {
 
 }
 
-/* Pequenas melohrias de acessibilidade */
+
 .message:focus {
 	outline: 3px solid rgba(59, 130, 246, 0.12);
 }
 
-/* ---------- Aba de Configurações (acoes.html) ---------- */
+
 .action-panel {
 	width: 100%;
 	padding: 10px 6px;
@@ -447,17 +447,17 @@ body.light {
 	background: rgba(204,17,11,0.06);
 }
 
-/* Se o painel for injetado fora da sidebar (ex.: full view), garantir responsividade */
+
 @media (max-width: 720px) {
 	.action-panel .settings-panel { padding: 16px; margin: 8px; }
 	.settings-item { min-width: 100px; font-size: 0.9rem; }
 }
 
-/* Botão flutuante de acessibilidade (sempre visível, exceto ao clicar em 'sair') */
+
 #floating-accessibility {
 	position: fixed;
 	bottom: 12px;
-	right: 12px; /* fica por cima da sidebar direita, na parte inferior */
+	right: 12px; 
 	z-index: 9999;
 	width: 90px;
 	height: 90px;
@@ -492,7 +492,7 @@ body.light {
 	#floating-accessibility img { width:22px; height:22px; }
 }
 
-/* Modal de Acessibilidade (overlay que foca um quadrado central) */
+
 #a11y-overlay,
 .a11y-overlay {
 	position: fixed;
@@ -544,7 +544,7 @@ body.light {
 	.a11y-modal { width: 320px; padding: 14px; }
 }
 
-/* Modal de Privacidade e Segurança */
+
 .privacy-overlay-wrapper {
 	position: fixed;
 	inset: 0;
