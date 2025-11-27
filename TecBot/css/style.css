@@ -23,6 +23,7 @@
 	--hover-shadow: rgba(0,0,0,0.36);
 	--panel-shadow: rgba(0,0,0,0.35);
 	--settings-border: rgba(255,255,255,0.06);
+	--acss: #ffffff;
 }
 
 
@@ -361,13 +362,15 @@ textarea {
 /* Tema claro opcional quando o body recebe .light */
 body.light {
 	--bg: #d9d9da;
-	--panel: #ffffff;
+	--panel: #a3a2a2;
 	--muted: #131313;
 	--primary: #b20000;
 	--user-bg: #be4141;
 	--assistant-bg: #f1f5f9;
 	--text: #0b1220;
 	--settings-border: rgba(0, 0, 0, 0.329);
+	--composer-bg: #b6b6b6;
+	--composer-border:#b20000;
 
 }
 
@@ -448,4 +451,129 @@ body.light {
 @media (max-width: 720px) {
 	.action-panel .settings-panel { padding: 16px; margin: 8px; }
 	.settings-item { min-width: 100px; font-size: 0.9rem; }
+}
+
+/* Botão flutuante de acessibilidade (sempre visível, exceto ao clicar em 'sair') */
+#floating-accessibility {
+	position: fixed;
+	bottom: 12px;
+	right: 12px; /* fica por cima da sidebar direita, na parte inferior */
+	z-index: 9999;
+	width: 90px;
+	height: 90px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: var(--acss);
+	border-radius: 50%;
+	box-shadow: 0 6px 18px var(--panel-shadow);
+	cursor: pointer;
+	transition: transform 0.12s ease, opacity 0.12s ease;
+	opacity: 1;
+	margin-right: 8px;
+	margin-bottom: 15px;
+}
+
+#floating-accessibility.hidden {
+	opacity: 0;
+	transform: scale(0.92);
+	pointer-events: none;
+}
+
+#floating-accessibility img {
+	width: 80px;
+	height: 80px;
+	display: block;
+	filter: none;
+}
+
+@media (max-width: 720px) {
+	#floating-accessibility { right: 8px; bottom: 8px; width:44px; height:44px; }
+	#floating-accessibility img { width:22px; height:22px; }
+}
+
+/* Modal de Acessibilidade (overlay que foca um quadrado central) */
+#a11y-overlay,
+.a11y-overlay {
+	position: fixed;
+	inset: 0;
+	background: rgba(3,6,12,0.45);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 10000;
+	padding: 20px;
+	visibility: hidden;
+	opacity: 0;
+	transition: opacity 0.16s ease, visibility 0.16s ease;
+}
+
+.a11y-overlay.open,
+#a11y-overlay.open {
+	visibility: visible;
+	opacity: 1;
+}
+
+.a11y-modal {
+	background: var(--panel);
+	color: var(--text);
+	border-radius: 12px;
+	width: 360px;
+	max-width: calc(100% - 40px);
+	padding: 18px 18px;
+	box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	align-items: center;
+}
+
+.a11y-title { font-size: 1.05rem; margin: 0; }
+.a11y-current { font-size: 1.05rem; color: var(--muted); }
+
+.a11y-controls { display:flex; gap:12px; align-items:center; }
+.a11y-btn { appearance:none; -webkit-appearance:none; border: none; background: var(--card-bg); color: var(--text); padding: 8px 12px; border-radius: 8px; cursor:pointer; font-size: 1rem; display:inline-flex; align-items:center; justify-content:center; }
+.a11y-btn:hover { transform: translateY(-2px); }
+.a11y-btn:active { transform: translateY(0); }
+.a11y-icon { width:20px; height:20px; display:inline-block; }
+
+/* botão fechar dentro do modal */
+.a11y-close { position: absolute; top: 12px; right: 12px; background: transparent; border: none; color: var(--muted); cursor: pointer; }
+
+@media (max-width: 420px) {
+	.a11y-modal { width: 320px; padding: 14px; }
+}
+
+/* Modal de Privacidade e Segurança */
+.privacy-overlay-wrapper {
+	position: fixed;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 10000;
+}
+.privacy-modal { 
+	background: var(--panel);
+	color: var(--text);
+	border-radius: 12px;
+	width: 420px;
+	max-width: calc(100% - 40px);
+	padding: 18px;
+	box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+	position: relative;
+}
+.privacy-text { font-size: 0.85rem; color: var(--muted); margin: 0 0 10px 0; }
+.privacy-note { 
+	display:block;
+	margin-top:8px; 
+	padding:10px; 
+	border-radius:8px; 
+	background: rgba(0,0,0,0.06); 
+	color: rgba(134, 61, 61, 0.85); 
+	font-weight:400; 
+	text-align:left; }
+
+@media (max-width: 520px) {
+	.privacy-modal { width: 320px; }
 }
