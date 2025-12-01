@@ -13,20 +13,6 @@ document.addEventListener("DOMContentLoaded", () => {
     messages.scrollTop = messages.scrollHeight;
   };
 
-  // Resposta simples caso API não funcione
-  const getBotReply = (userText) => {
-    let response = "Desculpe, não entendi. Sou uma demonstração.";
-    const lowerText = userText.trim().toLowerCase();
-
-    if (lowerText.includes("oi") || lowerText.includes("olá")) {
-      response = "Olá! Como posso ajudar você hoje?";
-    } else if (lowerText.includes("ajuda")) {
-      response = "Estou aqui! Tente perguntar algo simples.";
-    }
-
-    return response;
-  };
-
   // Função principal
   const handleSubmission = async () => {
     const userText = input.value.trim();
