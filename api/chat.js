@@ -1,3 +1,5 @@
+import fetch from "node-fetch";
+
 export default async function handler(req, res) {
   try {
     if (req.method !== "POST") {
@@ -20,8 +22,8 @@ export default async function handler(req, res) {
       });
     }
 
-    // gemini-1.5-flash
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`;
+    // GEMINI FREE (endpoint correto)
+    const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`;
 
     const response = await fetch(url, {
       method: "POST",
@@ -37,15 +39,6 @@ export default async function handler(req, res) {
       }),
     });
 
-    if (!response.ok) {
-      const errText = await response.text();
-      console.error("Erro API Google:", errText);
-      return res.status(500).json({
-        error: "Erro ao chamar a API do Google.",
-        details: errText,
-      });
-    }
-
     const data = await response.json();
 
     const reply =
@@ -53,7 +46,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ reply });
   } catch (err) {
-    console.error("ERRO NO SERVERLESS:", err);
+    console.error("ERRO SERVERLESS:", err);
     return res.status(500).json({
       error: "Falha interna no servidor.",
       details: err.message,
