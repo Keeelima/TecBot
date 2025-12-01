@@ -13,6 +13,52 @@ document.addEventListener("DOMContentLoaded", () => {
     messages.scrollTop = messages.scrollHeight;
   };
 
+  // Função para chamar a API Gemini (se disponível)
+  async function getGeminiResponse(text) {
+    try {
+      const response = await fetch(
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=AIzaSyAoY_msAXgZA8qasaAiKLlrBQNcYB7exFk",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [{ text: text }],
+              },
+            ],
+          }),
+        }
+      );
+
+      const data = await response.json();
+      console.log("Resposta API:", data);
+
+      return (
+        data.candidates?.[0]?.content?.parts?.[0]?.text ||
+        "Não consegui gerar resposta."
+      );
+    } catch (err) {
+      console.error("Erro API:", err);
+      return "Erro ao conectar com o Gemini.";
+    }
+  }
+
+  // Resposta simples caso API não funcione
+  const getBotReply = (userText) => {
+    let response = "Desculpe, não entendi. Sou uma demonstração.";
+    const lowerText = userText.trim().toLowerCase();
+
+    if (lowerText.includes("oi") || lowerText.includes("olá")) {
+      response = "Olá! Como posso ajudar você hoje?";
+    } else if (lowerText.includes("ajuda")) {
+      response = "Estou aqui! Tente perguntar algo simples.";
+    }
+
+    return response;
+  };
 
   // Função principal
   const handleSubmission = async () => {
@@ -22,7 +68,6 @@ document.addEventListener("DOMContentLoaded", () => {
     addMessage(userText, "user");
     input.value = "";
 
-    
     addMessage("Digitando...", "assistant");
     const typingDiv = messages.lastElementChild;
 
@@ -58,7 +103,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  
   if (input) {
     input.addEventListener("keydown", (event) => {
       if (event.key === "Enter" && !event.shiftKey) {
@@ -68,17 +112,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  
   addMessage("Olá! Eu sou o TecBot. Como posso te ajudar?", "assistant");
   if (input) input.focus();
-
-  
 });
 
 /* PAINEL LATERAL DE AÇÕES */
 (function () {
   const btnConfig = document.getElementById("btn-config");
-  
+
   let hiddenHelpEls = [];
 
   const panel = document.getElementById("action-panel");
@@ -104,17 +145,16 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function openActions() {
-  
-    if (location.protocol === 'file:') {
+    if (location.protocol === "file:") {
       try {
-        panel.innerHTML = '<div class="settings-panel">'
-          + '<p class="settings-desc">Não foi possível carregar as configurações porque os arquivos estão sendo abertos diretamente (file://). Rode um servidor local e abra via <code>http://localhost:8000/</code>. Exemplo (PowerShell):<br><code>cd "c:\\Users\\kevin\\Documents\\MeuProjetos\\TecBot\\TecBot"; python -m http.server 8000;</code></p>'
-          + '</div>';
+        panel.innerHTML =
+          '<div class="settings-panel">' +
+          '<p class="settings-desc">Não foi possível carregar as configurações porque os arquivos estão sendo abertos diretamente (file://). Rode um servidor local e abra via <code>http://localhost:8000/</code>. Exemplo (PowerShell):<br><code>cd "c:\\Users\\kevin\\Documents\\MeuProjetos\\TecBot\\TecBot"; python -m http.server 8000;</code></p>' +
+          "</div>";
         showBackIcon();
       } catch (e) {}
       return;
     }
-
 
     const candidateRels = [
       "acoes.html",
@@ -122,7 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
       "home/acoes.html",
       "./home/acoes.html",
       "../acoes.html",
-      "../home/acoes.html"
+      "../home/acoes.html",
     ];
     let text = null;
     for (const rel of candidateRels) {
@@ -133,37 +173,40 @@ document.addEventListener("DOMContentLoaded", () => {
           text = await res.text();
           break;
         }
-      } catch (err) {
-        
-      }
+      } catch (err) {}
     }
 
-    
     if (!text) {
       try {
-        const origin = location.origin && location.origin !== 'null' ? location.origin : (location.protocol + '//' + location.host);
-        const parts = location.pathname.split('/').filter(Boolean);
-        const firstSeg = parts.length ? ('/' + parts[0]) : '';
-        const rootCandidates = [
-          '/home/acoes.html',
-          '/acoes.html'
-        ];
+        const origin =
+          location.origin && location.origin !== "null"
+            ? location.origin
+            : location.protocol + "//" + location.host;
+        const parts = location.pathname.split("/").filter(Boolean);
+        const firstSeg = parts.length ? "/" + parts[0] : "";
+        const rootCandidates = ["/home/acoes.html", "/acoes.html"];
         if (firstSeg) {
-          rootCandidates.push(firstSeg + '/home/acoes.html', firstSeg + '/acoes.html');
+          rootCandidates.push(
+            firstSeg + "/home/acoes.html",
+            firstSeg + "/acoes.html"
+          );
         }
         for (const p of rootCandidates) {
           try {
             const url = origin + p;
-            const res = await fetch(url, { cache: 'no-store' });
-            if (res && res.ok) { text = await res.text(); break; }
+            const res = await fetch(url, { cache: "no-store" });
+            if (res && res.ok) {
+              text = await res.text();
+              break;
+            }
           } catch (e) {}
         }
       } catch (e) {}
     }
     if (!text) {
-      
       try {
-        panel.innerHTML = '<div class="settings-panel"><p class="settings-desc">Não foi possível carregar as configurações. Verifique se o servidor está rodando e tente novamente.</p></div>';
+        panel.innerHTML =
+          '<div class="settings-panel"><p class="settings-desc">Não foi possível carregar as configurações. Verifique se o servidor está rodando e tente novamente.</p></div>';
         showBackIcon();
       } catch (e) {}
       return;
@@ -172,31 +215,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let inner = text;
     if (bodyMatch) {
-      inner = bodyMatch[0]
-        .replace(/<body[^>]*>/i, "")
-        .replace(/<\/body>/i, "");
+      inner = bodyMatch[0].replace(/<body[^>]*>/i, "").replace(/<\/body>/i, "");
     }
 
-   
     try {
       inner = inner.replace(/<script[\s\S]*?<\/script>/gi, "");
-    } catch (err) {
-      
-    }
+    } catch (err) {}
     panel.innerHTML = inner;
     panel.scrollIntoView({ behavior: "smooth" });
 
-    
     try {
-      const sidebar = document.querySelector('aside.sidebar') || document.querySelector('.sidebar.right');
+      const sidebar =
+        document.querySelector("aside.sidebar") ||
+        document.querySelector(".sidebar.right");
       const scope = sidebar || document;
-      const candidates = scope.querySelectorAll('button, .sidebar-btn, [aria-label]');
+      const candidates = scope.querySelectorAll(
+        "button, .sidebar-btn, [aria-label]"
+      );
       hiddenHelpEls = [];
-      const hideTerms = ['ajuda', 'novo chat'];
+      const hideTerms = ["ajuda", "novo chat"];
       candidates.forEach((el) => {
-        const label = (el.getAttribute && el.getAttribute('aria-label')) || '';
-        const text = (el.innerText || '').trim().toLowerCase();
-        const labelLower = (label || '').toLowerCase();
+        const label = (el.getAttribute && el.getAttribute("aria-label")) || "";
+        const text = (el.innerText || "").trim().toLowerCase();
+        const labelLower = (label || "").toLowerCase();
 
         const shouldHide = hideTerms.some((term) => {
           return labelLower === term || text === term || text.includes(term);
@@ -204,7 +245,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (shouldHide) {
           hiddenHelpEls.push({ el, prev: el.style.display });
-          el.style.display = 'none';
+          el.style.display = "none";
         }
       });
     } catch (e) {}
@@ -213,10 +254,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function closeActions() {
     panel.innerHTML = "";
-    
+
     try {
       hiddenHelpEls.forEach((o) => {
-        if (o && o.el) o.el.style.display = o.prev || '';
+        if (o && o.el) o.el.style.display = o.prev || "";
       });
     } catch (e) {}
     hiddenHelpEls = [];
@@ -231,7 +272,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 })();
 
-
 (function () {
   function createFloatingA11yButton() {
     if (document.getElementById("floating-accessibility")) return;
@@ -243,24 +283,25 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.className = "floating-accessibility";
 
     const img = document.createElement("img");
-    
+
     try {
-      const p = window.location.pathname || '';
-      if (p.includes('/home/') || p.endsWith('/home') || p.includes('/acoes.html')) {
-        img.src = '../images/acss.png';
+      const p = window.location.pathname || "";
+      if (
+        p.includes("/home/") ||
+        p.endsWith("/home") ||
+        p.includes("/acoes.html")
+      ) {
+        img.src = "../images/acss.png";
       } else {
-        img.src = 'images/acss.png';
+        img.src = "images/acss.png";
       }
     } catch (e) {}
     btn.appendChild(img);
 
-   
     btn.addEventListener("click", (e) => {
-      
       e.preventDefault();
     });
 
-    
     btn.addEventListener("keydown", (ev) => {
       if (ev.key === "Enter" || ev.key === " ") btn.click();
     });
@@ -268,32 +309,39 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.appendChild(btn);
   }
 
-  
   function setupGlobalActionHandlers() {
     document.addEventListener("click", (e) => {
-      
       let clicked = e.target;
-      if (clicked && clicked.nodeType === Node.TEXT_NODE) clicked = clicked.parentElement;
+      if (clicked && clicked.nodeType === Node.TEXT_NODE)
+        clicked = clicked.parentElement;
 
-      const logoutEl = clicked && clicked.closest ? clicked.closest('[data-action="logout"]') : null;
+      const logoutEl =
+        clicked && clicked.closest
+          ? clicked.closest('[data-action="logout"]')
+          : null;
       if (logoutEl) {
         const btn = document.getElementById("floating-accessibility");
         if (btn) btn.classList.add("hidden");
-        
+
         window.location.href = "../../index.html";
         return;
       }
 
-      const themeEl = clicked && clicked.closest ? clicked.closest('[data-action="toggle-theme"]') : null;
+      const themeEl =
+        clicked && clicked.closest
+          ? clicked.closest('[data-action="toggle-theme"]')
+          : null;
       if (themeEl) {
         // toggle via centralized function
-        const isLightNow = document.body.classList.contains('light');
+        const isLightNow = document.body.classList.contains("light");
         setTheme(!isLightNow);
         return;
       }
 
-      
-      const privacyEl = clicked && clicked.closest ? clicked.closest('[data-action="privacy"]') : null;
+      const privacyEl =
+        clicked && clicked.closest
+          ? clicked.closest('[data-action="privacy"]')
+          : null;
       if (privacyEl) {
         openPrivacyOverlay();
         return;
@@ -301,17 +349,16 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", () => {
-        createFloatingA11yButton();
-        setupGlobalActionHandlers();
-      });
-    } else {
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
       createFloatingA11yButton();
       setupGlobalActionHandlers();
-    }
+    });
+  } else {
+    createFloatingA11yButton();
+    setupGlobalActionHandlers();
+  }
 })();
-
 
 (function () {
   const STORAGE_KEY = "tecbot_font_size";
@@ -330,7 +377,9 @@ document.addEventListener("DOMContentLoaded", () => {
   function setFontSize(px) {
     const size = Math.max(MIN, Math.min(MAX, Math.round(px)));
     document.documentElement.style.fontSize = size + "px";
-    try { localStorage.setItem(STORAGE_KEY, String(size)); } catch (e) {}
+    try {
+      localStorage.setItem(STORAGE_KEY, String(size));
+    } catch (e) {}
     const display = document.querySelector(".a11y-current-value");
     if (display) display.innerText = size + "px";
   }
@@ -368,13 +417,13 @@ document.addEventListener("DOMContentLoaded", () => {
     btnDecrease.type = "button";
     btnDecrease.className = "a11y-btn";
     btnDecrease.setAttribute("aria-label", "Diminuir fonte");
-    btnDecrease.innerHTML = "<span class=\"a11y-icon\">−</span>";
+    btnDecrease.innerHTML = '<span class="a11y-icon">−</span>';
 
     const btnIncrease = document.createElement("button");
     btnIncrease.type = "button";
     btnIncrease.className = "a11y-btn";
     btnIncrease.setAttribute("aria-label", "Aumentar fonte");
-    btnIncrease.innerHTML = "<span class=\"a11y-icon\">+</span>";
+    btnIncrease.innerHTML = '<span class="a11y-icon">+</span>';
 
     const close = document.createElement("button");
     close.type = "button";
@@ -393,7 +442,6 @@ document.addEventListener("DOMContentLoaded", () => {
     overlay.appendChild(modal);
     document.body.appendChild(overlay);
 
-   
     btnDecrease.addEventListener("click", () => {
       const cur = getCurrentFontSize();
       setFontSize(cur - STEP);
@@ -404,7 +452,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     close.addEventListener("click", () => closeA11yOverlay());
 
-   
     overlay.addEventListener("click", (e) => {
       if (e.target === overlay) closeA11yOverlay();
     });
@@ -421,7 +468,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const overlay = document.getElementById("a11y-overlay");
     if (!overlay) return;
     overlay.classList.add("open");
- 
+
     const firstBtn = overlay.querySelector(".a11y-btn");
     if (firstBtn) firstBtn.focus();
   }
@@ -430,13 +477,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const overlay = document.getElementById("a11y-overlay");
     if (!overlay) return;
     overlay.classList.remove("open");
-  
+
     setTimeout(() => {
       if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
     }, 180);
   }
 
-  
   function attachFloatingToOpen() {
     const floatBtn = document.getElementById("floating-accessibility");
     if (!floatBtn) return;
@@ -445,7 +491,6 @@ document.addEventListener("DOMContentLoaded", () => {
       openA11yOverlay();
     });
   }
-
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => {
@@ -456,41 +501,36 @@ document.addEventListener("DOMContentLoaded", () => {
     applyStoredFont();
     attachFloatingToOpen();
   }
-
 })();
 
-
-(function(){
-  const THEME_KEY = 'theme';
+(function () {
+  const THEME_KEY = "theme";
 
   function setTheme(isLight) {
     try {
-      if (isLight) document.body.classList.add('light');
-      else document.body.classList.remove('light');
-      localStorage.setItem(THEME_KEY, isLight ? 'light' : 'dark');
-    } catch(e) {}
+      if (isLight) document.body.classList.add("light");
+      else document.body.classList.remove("light");
+      localStorage.setItem(THEME_KEY, isLight ? "light" : "dark");
+    } catch (e) {}
   }
 
   function applyStoredTheme() {
     try {
       const v = localStorage.getItem(THEME_KEY);
-      if (v === 'light') document.body.classList.add('light');
-      else document.body.classList.remove('light');
-    } catch(e) {}
+      if (v === "light") document.body.classList.add("light");
+      else document.body.classList.remove("light");
+    } catch (e) {}
   }
-
 
   window.setTheme = setTheme;
   window.applyStoredTheme = applyStoredTheme;
 
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', applyStoredTheme);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", applyStoredTheme);
   } else {
     applyStoredTheme();
   }
 })();
-
 
 (function () {
   function closeExistingPrivacy() {
@@ -502,7 +542,7 @@ document.addEventListener("DOMContentLoaded", () => {
     closeExistingPrivacy();
     const overlay = document.createElement("div");
     overlay.id = "privacy-overlay";
-    overlay.className = "a11y-overlay open"; 
+    overlay.className = "a11y-overlay open";
 
     const wrapper = document.createElement("div");
     wrapper.className = "privacy-modal";
@@ -515,7 +555,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const small = document.createElement("p");
     small.className = "privacy-text";
-    small.innerText = "Seus dados estão protegidos e processados localmente quando possível. Não coletamos informações sensíveis sem consentimento.";
+    small.innerText =
+      "Seus dados estão protegidos e processados localmente quando possível. Não coletamos informações sensíveis sem consentimento.";
 
     const note = document.createElement("div");
     note.className = "privacy-note";
@@ -532,7 +573,8 @@ document.addEventListener("DOMContentLoaded", () => {
       if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
     });
     overlay.addEventListener("click", (e) => {
-      if (e.target === overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+      if (e.target === overlay && overlay.parentNode)
+        overlay.parentNode.removeChild(overlay);
     });
     document.addEventListener("keydown", function onKey(e) {
       if (e.key === "Escape") {
@@ -542,7 +584,5 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
- 
   window.openPrivacyOverlay = openPrivacyOverlay;
-
 })();
