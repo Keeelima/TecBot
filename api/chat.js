@@ -15,14 +15,14 @@ export default async function handler(req, res) {
     const { message } = req.body;
 
     if (!message || typeof message !== "string") {
-      return res
-        .status(400)
-        .json({ error: "O campo 'message' é obrigatório e deve ser texto." });
+      return res.status(400).json({
+        error: "O campo 'message' é obrigatório e deve ser texto.",
+      });
     }
 
-    // 🔥 Modelo FREE correto com endpoint atualizado
+    // 🎯 MODELO FREE FUNCIONANDO NO GOOGLE API v1
     const url =
-      `https://generativelanguage.googleapis.com/v1beta/models/` +
+      `https://generativelanguage.googleapis.com/v1/models/` +
       `gemini-1.5-flash-latest:generateContent?key=${GEMINI_KEY}`;
 
     const response = await fetch(url, {
@@ -42,8 +42,10 @@ export default async function handler(req, res) {
     console.log("RAW DATA GEMINI ===>");
     console.log(JSON.stringify(data, null, 2));
 
+    // Pegando a resposta corretamente
     const reply =
       data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+      data?.candidates?.[0]?.output_text ||
       "Sem resposta da API.";
 
     return res.status(200).json({ reply });
