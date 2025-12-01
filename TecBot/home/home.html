@@ -35,19 +35,18 @@
 
             <aside class="sidebar right" aria-label="Barra lateral direita">
                 <div class="sidebar-card">Ações</div>
-                <button class="sidebar-btn" aria-label="Configurações">Configurações</button>
-                <button class="sidebar-btn" aria-label="Exportar">Outros</button>
-                <button class="sidebar-btn" aria-label="Ajuda">Ajuda</button>
-                <button class="sidebar-btn" aria-label="Acessibilidade">Acessibilidade</button>
+                <button id="btn-config" class="sidebar-btn" aria-label="Configurações">Configurações</button>
+                <button class="sidebar-btn" aria-label="Novo Chat">Novo Chat</button>
+
                 
-                
-                    <button class="sidebar-logout" aria-label="Sair">Sair</button>
-                </form>
-                </aside>
+                <div id="action-panel" class="action-panel" aria-live="polite"></div>
+            </aside>
         </section>
     </div>
 
     <noscript>Ative o JavaScript para usar o chatbot.</noscript>
+
+    <script src="../js/API.js"></script>
     <script src="../js/script.js" defer></script>
 </body>
 </html>
