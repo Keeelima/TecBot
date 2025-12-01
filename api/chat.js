@@ -1,5 +1,3 @@
-import fetch from "node-fetch";
-
 export default async function handler(req, res) {
   try {
     if (req.method !== "POST") {
@@ -22,7 +20,7 @@ export default async function handler(req, res) {
       });
     }
 
-    // GEMINI FREE (endpoint correto)
+    // Endpoint oficial da API gratuita
     const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`;
 
     const response = await fetch(url, {
@@ -41,8 +39,12 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
+    // Muito importante: log para depurar
+    console.log("RESP GEMINI:", data);
+
     const reply =
-      data?.candidates?.[0]?.content?.parts?.[0]?.text || "Sem resposta.";
+      data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+      "Sem resposta da API.";
 
     return res.status(200).json({ reply });
   } catch (err) {
