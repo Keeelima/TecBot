@@ -1,44 +1,62 @@
-async function enviarMensagem() {
-  const input = document.getElementById("input");
-  const texto = input.value.trim();
-
-  if (!texto) return;
-
-  // mostrar no chat
-  addMessage(texto, "user");
-  input.value = "";
-
+export default async function handler(req, res) {
   try {
-    const resposta = await fetch("/api/chat", {
+    if (req.method !== "POST") {
+      return res.status(405).json({ error: "Método não permitido" });
+    }
+
+    const GEMINI_KEY = process.env.GEMINI_KEY;
+
+    if (!GEMINI_KEY) {
+      return res.status(500).json({
+        error: "A variável GEMINI_KEY não está configurada no Vercel.",
+      });
+    }
+
+    const { message } = req.body;
+
+    if (!message || typeof message !== "string") {
+      return res.status(400).json({
+        error: "O campo 'message' é obrigatório e deve ser texto.",
+      });
+    }
+
+    // gemini-1.5-flash
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`;
+
+    const response = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ message: texto }),
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [{ text: message }],
+          },
+        ],
+      }),
     });
 
-    if (!resposta.ok) {
-      console.error("Erro:", resposta.status);
-      addMessage("Erro no servidor (" + resposta.status + ")", "bot");
-      return;
+    if (!response.ok) {
+      const errText = await response.text();
+      console.error("Erro API Google:", errText);
+      return res.status(500).json({
+        error: "Erro ao chamar a API do Google.",
+        details: errText,
+      });
     }
 
-    const data = await resposta.json();
+    const data = await response.json();
 
-    addMessage(data.reply, "bot");
+    const reply =
+      data?.candidates?.[0]?.content?.parts?.[0]?.text || "Sem resposta.";
+
+    return res.status(200).json({ reply });
   } catch (err) {
-    console.error(err);
-    addMessage("Erro ao conectar ao servidor.", "bot");
+    console.error("ERRO NO SERVERLESS:", err);
+    return res.status(500).json({
+      error: "Falha interna no servidor.",
+      details: err.message,
+    });
   }
-}
-
-function addMessage(texto, tipo) {
-  const box = document.getElementById("messages");
-
-  const msg = document.createElement("div");
-  msg.className = tipo === "user" ? "msg-user" : "msg-bot";
-  msg.innerText = texto;
-
-  box.appendChild(msg);
-  box.scrollTop = box.scrollHeight;
 }
