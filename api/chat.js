@@ -8,7 +8,7 @@ export default async function handler(req, res) {
 
     if (!GEMINI_KEY) {
       return res.status(500).json({
-        error: "A variável GEMINI_KEY não está configurada no Vercel.",
+        error: "GEMINI_KEY não está configurada no Vercel.",
       });
     }
 
@@ -16,37 +16,34 @@ export default async function handler(req, res) {
 
     if (!message || typeof message !== "string") {
       return res.status(400).json({
-        error: "O campo 'message' é obrigatório e deve ser texto.",
+        error: "'message' é obrigatório e deve ser texto.",
       });
     }
 
-    // 🎯 MODELO FREE FUNCIONANDO NO GOOGLE API v1
+    // NOVO ENDPOINT OFICIAL
     const url =
-      `https://generativelanguage.googleapis.com/v1/models/` +
-      `gemini-1.5-flash-latest:generateContent?key=${GEMINI_KEY}`;
+      "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
 
     const response = await fetch(url, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        Authorization: `Bearer ${GEMINI_KEY}`,
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
-        contents: [
-          {
-            parts: [{ text: message }],
-          },
-        ],
+        model: "gemini-2.5-flash",
+        messages: [{ role: "user", content: message }],
       }),
     });
 
     const data = await response.json();
 
-    console.log("RAW DATA GEMINI ===>");
-    console.log(JSON.stringify(data, null, 2));
+    // LOG opcional
+    console.log("RAW GEMINI ===>", JSON.stringify(data, null, 2));
 
-    // Pegando a resposta corretamente
+    // Verifica se tem resposta
     const reply =
-      data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-      data?.candidates?.[0]?.output_text ||
-      "Sem resposta da API.";
+      data?.choices?.[0]?.message?.content || "Sem resposta da API.";
 
     return res.status(200).json({ reply });
   } catch (err) {
