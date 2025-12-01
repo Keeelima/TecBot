@@ -1,26 +1,17 @@
+// TecBot/js/API.js
 
-
-const API_URL = "/api/chat"; 
-
-async function getGeminiResponse(pergunta) {
+export async function enviarMensagemIA(texto) {
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: pergunta })
+      body: JSON.stringify({ message: texto }),
     });
 
-    if (!response.ok) {
-      throw new Error(`Erro no servidor: ${response.status}`);
-    }
-
     const data = await response.json();
-    return data.reply || "Resposta vazia.";
+    return data.response || "Erro ao gerar resposta.";
   } catch (err) {
-    console.error("Erro ao chamar API:", err);
-    return "Erro ao conectar com o servidor.";
+    console.error("Erro no fetch:", err);
+    return "Erro ao conectar ao servidor.";
   }
 }
-
-
-window.getGeminiResponse = getGeminiResponse;
