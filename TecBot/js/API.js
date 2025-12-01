@@ -1,7 +1,17 @@
 async function getGeminiResponse(text) {
   try {
     const GEMINI_KEY = process.env.GEMINI_KEY;
-    const BASE_PROMPT = `Você é um assistente especializado na ETEC Cônego José Bento de Jacareí. Somente forneça informações relacionadas à escola, como cursos oferecidos, histórico, localização, funcionamento, professores, eventos e notícias. Não responda sobre outros assuntos, e se a pergunta não for sobre a ETEC, informe educadamente que não tem informações sobre isso Responda de forma clara e objetiva, adequada para estudantes e interessados na ETEC.`;
+    const fs = require("fs").promises;
+    const fetch = require("node-fetch");
+    const dados_json = await fs.readFile("../../etec.json", "utf-8");
+    const jsonETEC = JSON.parse(dados_json);
+
+
+
+    const BASE_PROMPT = `Você é um assistente especializado exclusivamente na ETEC Cônego José Bento de Jacareí.Use apenas os dados fornecidos neste JSON para responder perguntas.JSON: ${JSON.stringify(
+      jsonETEC
+    )}Se a pergunta não puder ser respondida com esse JSON, diga:"Desculpe, não tenho informações sobre isso."`;
+
     const promptCompleto = BASE_PROMPT + text;
 
     const response = await fetch(
