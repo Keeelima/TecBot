@@ -45,7 +45,7 @@ if (formLogin) {
         }
 
         // LOGIN OK
-        window.location.href = "home/home.html";
+        window.location.href = "TecBot/home/home.html";
 
         // LIMPA CAMPOS
         const u = document.getElementById("username");
