@@ -293,7 +293,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const btn = document.getElementById("floating-accessibility");
         if (btn) btn.classList.add("hidden");
         
-        window.location.href = "../index.html";
+        window.location.href = "../../index.html";
         return;
       }
 
