@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
     messages.scrollTop = messages.scrollHeight;
   };
 
+
   // Função principal
   const handleSubmission = async () => {
     const userText = input.value.trim();
