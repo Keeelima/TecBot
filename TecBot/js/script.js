@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
     messages.scrollTop = messages.scrollHeight;
     try {
       if (typeof adjustMessagesHeight === "function") adjustMessagesHeight();
-    } catch (e) {}
+    } catch (e) { }
   };
 
   // Resposta simples caso API não funcione
@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (input && input.tagName && input.tagName.toLowerCase() === "textarea") {
       try {
         input.style.height = "auto";
-      } catch (err) {}
+      } catch (err) { }
     }
 
     addMessage("Digitando...", "assistant");
@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
       input.rows = 1;
       try {
         input.style.height = "auto";
-      } catch (err) {}
+      } catch (err) { }
     }
   };
 
@@ -132,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // alguns paddings podem afetar scrollHeight, usamos scrollHeight
         const newH = Math.min(inputEl.scrollHeight, maxH);
         inputEl.style.height = newH + "px";
-      } catch (err) {}
+      } catch (err) { }
       // atualiza área de mensagens para não empurrar a composer
       adjustMessagesHeight();
     }
@@ -150,7 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const ro = new ResizeObserver(() => adjustMessagesHeight());
       ro.observe(composerEl);
     }
-  } catch (e) {}
+  } catch (e) { }
   // observa mudanças em messages para ajustar imediatamente e manter scroll
   try {
     const mo = new MutationObserver(() => {
@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (messages) messages.scrollTop = messages.scrollHeight;
     });
     if (messages) mo.observe(messages, { childList: true });
-  } catch (e) {}
+  } catch (e) { }
 
   // ajuste inicial após render
   setTimeout(adjustMessagesHeight, 60);
@@ -200,7 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
           '<p class="settings-desc">Não foi possível carregar as configurações porque os arquivos estão sendo abertos diretamente (file://). Rode um servidor local e abra via <code>http://localhost:8000/</code>. Exemplo (PowerShell):<br><code>cd "c:\\Users\\kevin\\Documents\\MeuProjetos\\TecBot\\TecBot"; python -m http.server 8000;</code></p>' +
           "</div>";
         showBackIcon();
-      } catch (e) {}
+      } catch (e) { }
       return;
     }
 
@@ -221,7 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
           text = await res.text();
           break;
         }
-      } catch (err) {}
+      } catch (err) { }
     }
 
     if (!text) {
@@ -247,16 +247,16 @@ document.addEventListener("DOMContentLoaded", () => {
               text = await res.text();
               break;
             }
-          } catch (e) {}
+          } catch (e) { }
         }
-      } catch (e) {}
+      } catch (e) { }
     }
     if (!text) {
       try {
         panel.innerHTML =
           '<div class="settings-panel"><p class="settings-desc">Não foi possível carregar as configurações. Verifique se o servidor está rodando e tente novamente.</p></div>';
         showBackIcon();
-      } catch (e) {}
+      } catch (e) { }
       return;
     }
     const bodyMatch = text.match(/<body[^>]*>[\s\S]*<\/body>/i);
@@ -268,7 +268,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       inner = inner.replace(/<script[\s\S]*?<\/script>/gi, "");
-    } catch (err) {}
+    } catch (err) { }
     panel.innerHTML = inner;
     panel.scrollIntoView({ behavior: "smooth" });
 
@@ -296,7 +296,7 @@ document.addEventListener("DOMContentLoaded", () => {
           el.style.display = "none";
         }
       });
-    } catch (e) {}
+    } catch (e) { }
     showBackIcon();
   }
 
@@ -307,7 +307,7 @@ document.addEventListener("DOMContentLoaded", () => {
       hiddenHelpEls.forEach((o) => {
         if (o && o.el) o.el.style.display = o.prev || "";
       });
-    } catch (e) {}
+    } catch (e) { }
     hiddenHelpEls = [];
     showConfigLabel();
   }
@@ -330,25 +330,28 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.type = "button";
     btn.className = "floating-accessibility";
 
+    // CRIA UMA ÚNICA IMAGEM
     const img = document.createElement("img");
 
     try {
       const p = window.location.pathname || "";
-      if (
-        p.includes("/home/") ||
-        p.endsWith("/home") ||
-        p.includes("/acoes.html")
-      ) {
-        img.src = "../images/acss.png";
-      } else {
-        img.src = "../images/acss.png";
-      }
-    } catch (e) {}
+
+      // Caminho correto a partir de /TecBot/home/
+      img.src = "/TecBot/images/acss.png";
+
+
+      // caso não carregue, mostra no console
+      img.onerror = () =>
+        console.error("ERRO: imagem não carregou em", img.src);
+
+    } catch (e) {
+      console.error("Erro ao definir imagem:", e);
+    }
+
+    // Adiciona a imagem no botão
     btn.appendChild(img);
 
-    btn.addEventListener("click", (e) => {
-      e.preventDefault();
-    });
+    btn.addEventListener("click", (e) => e.preventDefault());
 
     btn.addEventListener("keydown", (ev) => {
       if (ev.key === "Enter" || ev.key === " ") btn.click();
@@ -397,6 +400,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // CHAMADAS CORRETAS (SEM DUPLICAR)
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => {
       createFloatingA11yButton();
@@ -407,6 +411,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupGlobalActionHandlers();
   }
 })();
+
 
 (function () {
   const STORAGE_KEY = "tecbot_font_size";
@@ -427,7 +432,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.documentElement.style.fontSize = size + "px";
     try {
       localStorage.setItem(STORAGE_KEY, String(size));
-    } catch (e) {}
+    } catch (e) { }
     const display = document.querySelector(".a11y-current-value");
     if (display) display.innerText = size + "px";
   }
@@ -436,7 +441,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const v = localStorage.getItem(STORAGE_KEY);
       if (v) setFontSize(parseInt(v, 10));
-    } catch (e) {}
+    } catch (e) { }
   }
 
   function createA11yOverlay() {
@@ -559,7 +564,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (isLight) document.body.classList.add("light");
       else document.body.classList.remove("light");
       localStorage.setItem(THEME_KEY, isLight ? "light" : "dark");
-    } catch (e) {}
+    } catch (e) { }
   }
 
   function applyStoredTheme() {
@@ -567,7 +572,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const v = localStorage.getItem(THEME_KEY);
       if (v === "light") document.body.classList.add("light");
       else document.body.classList.remove("light");
-    } catch (e) {}
+    } catch (e) { }
   }
 
   window.setTheme = setTheme;
@@ -637,12 +642,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 (function () {
   function setupNovoChat() {
-    const novoBtn = document.querySelector(
-      '.sidebar-btn[aria-label="Novo Chat"]'
-    );
-    Array.from(document.querySelectorAll(".sidebar-btn")).find(
-      (b) => (b.innerText || "").trim().toLowerCase() === "novo chat"
-    );
+    // Seleciona o botão corretamente
+    const novoBtn =
+      document.querySelector('.sidebar-btn[aria-label="Novo Chat"]') ||
+      Array.from(document.querySelectorAll(".sidebar-btn")).find(
+        (b) => (b.innerText || "").trim().toLowerCase() === "novo chat"
+      );
+
     const mensagensEl = document.getElementById("messages");
     const inputEl = document.getElementById("input");
 
@@ -653,8 +659,10 @@ document.addEventListener("DOMContentLoaded", () => {
     novoBtn.addEventListener("click", (ev) => {
       ev.preventDefault();
 
+      // Limpa todas as mensagens
       mensagensEl.innerHTML = "";
 
+      // Cria a mensagem inicial do bot
       const msgDiv = document.createElement("div");
       msgDiv.className = "message assistant";
       const p = document.createElement("p");
@@ -662,20 +670,20 @@ document.addEventListener("DOMContentLoaded", () => {
       msgDiv.appendChild(p);
       mensagensEl.appendChild(msgDiv);
 
+      // Scroll para o final
       mensagensEl.scrollTop = mensagensEl.scrollHeight;
 
+      // Limpa e foca no input
       if (inputEl) {
         inputEl.value = "";
         if (inputEl.tagName.toLowerCase() === "textarea") {
           inputEl.rows = 1;
           try {
             inputEl.style.height = "auto";
-          } catch (err) {}
+          } catch (err) { }
         }
         inputEl.focus();
       }
-      try {
-      } catch (e) {}
     });
   }
 
@@ -685,3 +693,59 @@ document.addEventListener("DOMContentLoaded", () => {
     setupNovoChat();
   }
 })();
+
+// --- NOVO CHAT MOBILE ---
+(function () {
+  function setupNovoChatMobile() {
+    const novoBtnMobile = document.querySelector('[data-action="novo-chat"]');
+    const mensagensEl = document.getElementById("messages");
+    const inputEl = document.getElementById("input");
+
+    if (!novoBtnMobile || !mensagensEl) return;
+
+    const textoInicial = "Olá! Eu sou o TecBot. Como posso te ajudar?";
+
+    novoBtnMobile.addEventListener("click", (ev) => {
+      ev.preventDefault();
+
+      // Limpa todas as mensagens
+      mensagensEl.innerHTML = "";
+
+      // Adiciona a mensagem inicial do bot
+      const msgDiv = document.createElement("div");
+      msgDiv.className = "message assistant";
+      const p = document.createElement("p");
+      p.innerText = textoInicial;
+      msgDiv.appendChild(p);
+      mensagensEl.appendChild(msgDiv);
+
+      // Scroll para o final
+      mensagensEl.scrollTop = mensagensEl.scrollHeight;
+
+      // Limpa e foca no input
+      if (inputEl) {
+        inputEl.value = "";
+        if (inputEl.tagName.toLowerCase() === "textarea") {
+          inputEl.rows = 1;
+          inputEl.style.height = "auto";
+        }
+        inputEl.focus();
+      }
+
+      // Fecha o offcanvas automaticamente (Bootstrap)
+      const offcanvasEl = document.getElementById("menuAcoes");
+      if (offcanvasEl) {
+        const bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvasEl);
+        if (bsOffcanvas) bsOffcanvas.hide();
+      }
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", setupNovoChatMobile);
+  } else {
+    setupNovoChatMobile();
+  }
+})();
+
+

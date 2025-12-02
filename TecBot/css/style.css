@@ -600,3 +600,129 @@ body.light {
 @media (max-width: 520px) {
 	.privacy-modal { width: 320px; }
 }
+
+/* ============================
+   CORREÇÃO DO OFFCANVAS MOBILE
+   ============================ */
+
+/* Fundo do offcanvas */
+#menuAcoes.offcanvas {
+    background: var(--canvas-bg, #000) !important;
+}
+
+/* Texto padrão */
+#menuAcoes,
+#menuAcoes * {
+    color: var(--canvas-text, #fff) !important;
+}
+
+/* Botões dentro do offcanvas */
+#menuAcoes .settings-item {
+    background: transparent !important;
+    border: 1px solid var(--canvas-text, #fff) !important;
+    color: var(--canvas-text, #fff) !important;
+}
+
+/* Botão Sair (vermelho) */
+#menuAcoes .destructive {
+    border-color: #c00 !important;
+    color: #c00 !important;
+}
+
+/* HEADER DO OFFCANVAS */
+#menuAcoes .offcanvas-header {
+    background: transparent !important;
+    border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+}
+
+/* FORÇA zero de qualquer filtro estranho que gere o verde */
+#menuAcoes,
+#menuAcoes * {
+    filter: none !important;
+    opacity: 1 !important;
+    mix-blend-mode: normal !important;
+}
+#menuAcoes .btn-close {
+    filter: invert(0); /* padrão → preto */
+}
+
+
+
+/* ============================
+   TEMAS AUTOMÁTICOS
+   ============================ */
+
+/* Tema ESCURO → fundo preto, texto branco */
+body.dark #menuAcoes {
+    --canvas-bg: #000;
+    --canvas-text: #fff;
+}
+
+/* Tema CLARO → fundo branco, texto preto */
+body.light #menuAcoes {
+    --canvas-bg: #fff;
+    --canvas-text: #000;
+}
+
+/* ================================
+   RESPONSIVIDADE LOGIN/CADASTRO
+   ================================ */
+
+.login {
+    width: 100%;
+    max-width: 400px;        /* LIMITA A 400px */
+    padding: 35px 25px;      /* REDUZIDO PARA MOBILE */
+    border-radius: 25px;
+    margin: 0 auto;
+}
+
+/* Título responsivo */
+.title-login {
+    font-size: 1.9rem;
+}
+
+/* Inputs menores */
+.input-login {
+    padding: 10px 12px;
+    font-size: 1rem;
+    margin-bottom: 12px;
+}
+
+/* Botão ocupa toda largura */
+.btn-login {
+    width: 100% !important;
+    margin-left: 0 !important;
+    border-radius: 40px;
+    padding: 12px;
+}
+
+/* Link */
+.a-login {
+    margin-top: 20px;
+    font-size: 0.95rem;
+}
+
+/* ================================
+   MOBILE
+   ================================ */
+@media (max-width: 480px) {
+
+    .login {
+        padding: 25px 18px;
+        max-width: 92%;     /* AJUSTA MELHOR NO CELULAR */
+    }
+
+    .title-login {
+        font-size: 1.6rem;
+    }
+
+    .input-login {
+        font-size: 0.95rem;
+        padding: 9px 11px;
+    }
+
+    .btn-login {
+        font-size: 0.95rem;
+        padding: 10px;
+    }
+}

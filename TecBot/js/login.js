@@ -45,7 +45,8 @@ if (formLogin) {
         }
 
         // LOGIN OK
-        window.location.href = "TecBot/home/home.html";
+        window.location.href = "/TecBot/home/home.html";
+
 
         // LIMPA CAMPOS
         const u = document.getElementById("username");
@@ -135,3 +136,34 @@ if (voltarLoginBtn) {
         if (erroCadastro) erroCadastro.textContent = "";
     };
 }
+
+function atualizarCorDoBotaoClose() {
+    const tema = document.documentElement.getAttribute("data-theme");
+    const btnClose = document.querySelector("#menuAcoes .btn-close");
+
+    if (!btnClose) return;
+
+    // Bootstrap SEMPRE coloca um ícone nativo
+    // ENTÃO usamos filter pra inverter corretamente
+    if (tema === "dark") {
+        btnClose.style.filter = "invert(1) brightness(2)";  // X BRANCO
+    } else {
+        btnClose.style.filter = "invert(0)";                // X PRETO
+    }
+}
+
+// --- TROCA DO TEMA ---
+document.querySelector("[data-action='toggle-theme']")
+    .addEventListener("click", () => {
+
+        const atual = document.documentElement.getAttribute("data-theme");
+        const novoTema = atual === "dark" ? "light" : "dark";
+
+        document.documentElement.setAttribute("data-theme", novoTema);
+
+        atualizarCorDoBotaoClose();
+    });
+
+// --- QUANDO O MENU ABRIR ---
+document.getElementById("menuAcoes")
+    .addEventListener("shown.bs.offcanvas", atualizarCorDoBotaoClose);
