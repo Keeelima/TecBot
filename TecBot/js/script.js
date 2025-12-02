@@ -37,6 +37,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     addMessage(userText, "user");
     input.value = "";
+    // após enviar, reset da altura do textarea (se aplicável)
+    if (input && input.tagName && input.tagName.toLowerCase() === "textarea") {
+      try {
+        input.style.height = "auto";
+      } catch (err) {}
+    }
 
     addMessage("Digitando...", "assistant");
     const typingDiv = messages.lastElementChild;
@@ -62,7 +68,12 @@ document.addEventListener("DOMContentLoaded", () => {
       addMessage(reply, "assistant");
     }
 
-    if (input.tagName.toLowerCase() === "textarea") input.rows = 1;
+    if (input.tagName.toLowerCase() === "textarea") {
+      input.rows = 1;
+      try {
+        input.style.height = "auto";
+      } catch (err) {}
+    }
   };
 
   // Envio pelo formulário
@@ -107,8 +118,34 @@ document.addEventListener("DOMContentLoaded", () => {
   try {
     const composerEl = document.getElementById("composer");
     const inputEl = document.getElementById("input");
-    if (inputEl)
-      inputEl.addEventListener("input", () => adjustMessagesHeight());
+
+    // Auto-resize do textarea: expande um pouco conforme o conteúdo,
+    // respeitando o `max-height` definido no CSS.
+    function autosizeTextarea() {
+      if (!inputEl) return;
+      try {
+        inputEl.style.height = "auto";
+        const computed = window.getComputedStyle(inputEl);
+        // pega max-height definido no CSS (ex: "200px")
+        let maxH = parseInt(computed.getPropertyValue("max-height"), 10);
+        if (!maxH || Number.isNaN(maxH)) maxH = 200;
+        // alguns paddings podem afetar scrollHeight, usamos scrollHeight
+        const newH = Math.min(inputEl.scrollHeight, maxH);
+        inputEl.style.height = newH + "px";
+      } catch (err) {}
+      // atualiza área de mensagens para não empurrar a composer
+      adjustMessagesHeight();
+    }
+
+    if (inputEl) {
+      // inicializa altura correta
+      autosizeTextarea();
+      inputEl.addEventListener("input", autosizeTextarea);
+      // também em caso de mudanças de conteúdo programáticas
+      const inputMut = new MutationObserver(autosizeTextarea);
+      inputMut.observe(inputEl, { characterData: true, childList: true, subtree: true });
+    }
+
     if (window.ResizeObserver && composerEl) {
       const ro = new ResizeObserver(() => adjustMessagesHeight());
       ro.observe(composerEl);
@@ -629,7 +666,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (inputEl) {
         inputEl.value = "";
-        if (inputEl.tagName.toLowerCase() === "textarea") inputEl.rows = 1;
+        if (inputEl.tagName.toLowerCase() === "textarea") {
+          inputEl.rows = 1;
+          try {
+            inputEl.style.height = "auto";
+          } catch (err) {}
+        }
         inputEl.focus();
       }
       try {
