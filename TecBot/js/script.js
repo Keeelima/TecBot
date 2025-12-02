@@ -16,6 +16,37 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (e) { }
   };
 
+  // Habilita/Desabilita o composer enquanto aguardamos resposta do bot
+  function setComposerDisabled(state) {
+    try {
+      const composer = document.getElementById("composer");
+      const inputEl = document.getElementById("input");
+      const sendBtn = document.querySelector(".composer-send");
+
+      if (inputEl) {
+        inputEl.disabled = !!state;
+        if (state) {
+          inputEl.setAttribute("aria-disabled", "true");
+          try {
+            inputEl.blur();
+          } catch (e) {}
+        } else {
+          inputEl.removeAttribute("aria-disabled");
+          try {
+            inputEl.focus();
+          } catch (e) {}
+        }
+      }
+
+      if (sendBtn) sendBtn.disabled = !!state;
+
+      if (composer) {
+        if (state) composer.classList.add("composer-disabled");
+        else composer.classList.remove("composer-disabled");
+      }
+    } catch (e) {}
+  }
+
   // Resposta simples caso API não funcione
   const getBotReply = (userText) => {
     let response = "Desculpe, não entendi. Sou uma demonstração.";
@@ -46,6 +77,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     addMessage("Digitando...", "assistant");
     const typingDiv = messages.lastElementChild;
+    // Bloqueia o composer até a resposta do bot chegar
+    try {
+      setComposerDisabled(true);
+    } catch (e) {}
 
     let reply = "";
     try {
@@ -59,13 +94,19 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Erro ao obter resposta:", err);
     }
 
-    // Atualiza a mensagem do bot
+    // Atualiza a mensagem do bot e reabilita o composer
     if (typingDiv) {
       const p = typingDiv.querySelector("p");
       if (p) p.innerText = reply;
       typingDiv.className = "message assistant";
+      try {
+        setComposerDisabled(false);
+      } catch (e) {}
     } else {
       addMessage(reply, "assistant");
+      try {
+        setComposerDisabled(false);
+      } catch (e) {}
     }
 
     if (input.tagName.toLowerCase() === "textarea") {
@@ -683,6 +724,7 @@ document.addEventListener("DOMContentLoaded", () => {
           } catch (err) { }
         }
         inputEl.focus();
+        try { setComposerDisabled(false); } catch (e) {}
       }
     });
   }
@@ -730,6 +772,7 @@ document.addEventListener("DOMContentLoaded", () => {
           inputEl.style.height = "auto";
         }
         inputEl.focus();
+        try { setComposerDisabled(false); } catch (e) {}
       }
 
       // Fecha o offcanvas automaticamente (Bootstrap)
