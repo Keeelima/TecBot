@@ -1,61 +1,54 @@
-async function getGeminiResponse(text) {
-  try {
-    const GEMINI_KEY = process.env.GEMINI_KEY;
-    if (!GEMINI_KEY) {
-      console.error("GEMINI_KEY não definido em process.env");
-      return "Erro: chave Gemini não configurada.";
+// Arquivo de API para uso no navegador
+// Chama o backend em /api/chat e retorna apenas o texto da resposta
+(function () {
+    async function getGeminiResponse(text) {
+        try {
+            const prompt = (text || "").toString().trim();
+            if (!prompt) return "Digite uma mensagem para continuar.";
+
+            if (location.protocol === "file:") {
+                return "Servidor não detectado. Rode via http(s) e configure o backend (/api/chat).";
+            }
+
+            const url = new URL("/api/chat", window.location.origin).toString();
+
+            const ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
+            const timeoutId = ctrl ? setTimeout(() => ctrl.abort(), 30000) : null; // 30s
+
+            const res = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: prompt }),
+                signal: ctrl ? ctrl.signal : undefined,
+            });
+
+            if (timeoutId) clearTimeout(timeoutId);
+
+            if (!res.ok) {
+                let details = "";
+                try {
+                    const errJson = await res.json();
+                    details = errJson?.error || JSON.stringify(errJson);
+                } catch (_) {
+                    try {
+                        details = await res.text();
+                    } catch (_) {}
+                }
+                console.error("Erro da API backend:", res.status, details);
+                return `Erro ao obter resposta (HTTP ${res.status}).`;
+            }
+
+            const data = await res.json().catch(() => ({}));
+            const reply = data?.reply;
+            if (typeof reply === "string" && reply.trim()) return reply.trim();
+            return "Sem resposta do modelo.";
+        } catch (err) {
+            if (err?.name === "AbortError") return "Tempo esgotado ao obter resposta.";
+            console.error("Falha ao consultar backend:", err);
+            return "Erro ao conectar ao servidor. Tente novamente.";
+        }
     }
 
-    if (typeof globalThis.fetch !== "function") {
-      try {
-        const nf = await import("node-fetch");
-        globalThis.fetch = nf.default || nf;
-      } catch (e) {
-        console.error(
-          "fetch não disponível. Instale node-fetch ou use Node 18+.",
-          e
-        );
-        return "Erro interno: fetch indisponível.";
-      }
-    }
-
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateText?key=${encodeURIComponent(
-      GEMINI_KEY
-    )}`;
-
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        prompt: { text },
-        temperature: 0.7,
-        candidateCount: 1,
-      }),
-    });
-
-    if (!response.ok) {
-      const errText = await response.text().catch(() => "");
-      throw new Error(`HTTP ${response.status} - ${errText}`);
-    }
-
-    const data = await response.json().catch(() => null);
-    console.log("Resposta API:", data);
-
-    // suportar variações de formato de resposta
-    const candidate = data?.candidates?.[0];
-    const result =
-      candidate?.output ||
-      candidate?.content?.[0]?.text ||
-      data?.output ||
-      (typeof data === "string" ? data : null);
-
-    return result || "Não consegui gerar resposta.";
-  } catch (err) {
-    console.error("Erro API:", err);
-    return "Erro ao conectar com o Gemini.";
-  }
-}
-
-module.exports = { getGeminiResponse };
+    // expõe globalmente para o script principal
+    window.getGeminiResponse = getGeminiResponse;
+})();
