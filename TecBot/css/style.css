@@ -19,6 +19,10 @@
 	--composer-border: rgba(255,255,255,0.06);
 	--composer-focus-shadow: rgba(252, 3, 3, 0.28);
 	--composer-top-border: rgba(255,255,255,0.12);
+<<<<<<< HEAD
+=======
+	--composer-input-bg: rgba(255,255,255,0.02);
+>>>>>>> 1d2e6838e58ae1f117e1f1ecfce2f58b714f93ec
 	--scrollbar-thumb: rgba(255,0,0,0.06);
 	--hover-shadow: rgba(0,0,0,0.36);
 	--panel-shadow: rgba(0,0,0,0.35);
@@ -32,8 +36,7 @@
 }
 
 html,
-body,
-#messages {
+body {
 	height: 100%
 }
 
@@ -135,7 +138,7 @@ label{
 	background: transparent;
 	text-align: left;
 	position: relative;
-	z-index: 2;
+	z-index: 80;
 }
 
 .app-title {
@@ -156,17 +159,23 @@ label{
 	flex-direction: column;
 	padding: 0;
 	min-height: 0;
+	position: relative; /* necessário para posicionar a composer absoluta */
 }
 
 .messages {
 	border-radius: 12px;
-	margin-top: 60px;
-	padding: 62px 16px 16px 16px;
+	/* posiciona a área de mensagens para ocupar o espaço do chat e rolar internamente */
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0; /* será ajustado dinamicamente pelo JS para liberar espaço à composer */
+	padding: 62px 16px 24px 16px; /* padding-top para espaçamento visual; padding-bottom será ajustado pelo JS */
 	overflow-y: auto;
+	z-index: 5; /* manter abaixo da composer */
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
-	flex: 1 1 auto;
 	min-height: 0;
 	background: transparent;
 }
@@ -178,7 +187,8 @@ label{
 	padding: 16px 24px;
 	align-items: stretch;
 	flex: 1 1 auto;
-	margin-top: -64px;
+	/* removido overlap negativo para evitar mensagens sobre o cabeçalho */
+	margin-top: 8px;
 }
 
 
@@ -280,11 +290,16 @@ label{
 .composer {
 	display: flex;
 	gap: 8px;
-	margin: 5px 0 0 0;
-	padding: 20px 0px;
+	margin: 0; /* margin zero quando absoluta */
 	align-items: center;
 	border-top: 2px solid rgba(255, 255, 255, 0.12);
-	position: relative;
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 60;
+	backdrop-filter: blur(4px);
+	box-shadow: 0 -8px 24px rgba(0,0,0,0.45);
 }
 
 .composer-input {
@@ -295,8 +310,12 @@ label{
 	padding-right: 70px;
 	resize: none;
 	border-radius: 20px;
+<<<<<<< HEAD
 	border: 1px solid rgba(255, 255, 255, 0.06);
 	background: rgba(255, 255, 255, 0.02);
+=======
+	background: var(--composer-input-bg);
+>>>>>>> 1d2e6838e58ae1f117e1f1ecfce2f58b714f93ec
 	color: #fff;
 	outline: none;
 	font-size: 0.95rem;
@@ -324,6 +343,10 @@ label{
 	right: 15px;
 	top: 50%;
 	transform: translateY(-50%);
+}
+
+.composer-input::placeholder {
+	color: var(--muted);
 }
 
 .composer-send:active {
@@ -371,6 +394,10 @@ body.light {
 	--settings-border: rgba(0, 0, 0, 0.329);
 	--composer-bg: #b6b6b6;
 	--composer-border:#b20000;
+<<<<<<< HEAD
+=======
+	--composer-input-bg: #9e95958f;
+>>>>>>> 1d2e6838e58ae1f117e1f1ecfce2f58b714f93ec
 
 }
 
