@@ -13,39 +13,6 @@ document.addEventListener("DOMContentLoaded", () => {
     messages.scrollTop = messages.scrollHeight;
   };
 
-  // Função para chamar a API Gemini (se disponível)
-  async function getGeminiResponse(text) {
-    try {
-      const response = await fetch(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=AIzaSyAoY_msAXgZA8qasaAiKLlrBQNcYB7exFk",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            contents: [
-              {
-                parts: [{ text: text }],
-              },
-            ],
-          }),
-        }
-      );
-
-      const data = await response.json();
-      console.log("Resposta API:", data);
-
-      return (
-        data.candidates?.[0]?.content?.parts?.[0]?.text ||
-        "Não consegui gerar resposta."
-      );
-    } catch (err) {
-      console.error("Erro API:", err);
-      return "Erro ao conectar com o Gemini.";
-    }
-  }
-
   // Resposta simples caso API não funcione
   const getBotReply = (userText) => {
     let response = "Desculpe, não entendi. Sou uma demonstração.";
