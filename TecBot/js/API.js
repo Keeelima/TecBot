@@ -10,7 +10,9 @@ async function getGeminiResponse(text) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          prompt: { text },
+          prompt: {
+            text: text,
+          },
           temperature: 0.7,
           candidateCount: 1,
         }),
@@ -25,6 +27,7 @@ async function getGeminiResponse(text) {
     const data = await response.json();
     console.log("Resposta API:", data);
 
+    // Retorna o texto gerado ou mensagem de fallback
     return data.candidates?.[0]?.output || "Não consegui gerar resposta.";
   } catch (err) {
     console.error("Erro API:", err);
