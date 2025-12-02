@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
     msgDiv.appendChild(p);
     messages.appendChild(msgDiv);
     messages.scrollTop = messages.scrollHeight;
+    try { if (typeof adjustMessagesHeight === 'function') adjustMessagesHeight(); } catch(e) {}
   };
 
   // Função para chamar a API Gemini (se disponível)
@@ -114,6 +115,46 @@ document.addEventListener("DOMContentLoaded", () => {
 
   addMessage("Olá! Eu sou o TecBot. Como posso te ajudar?", "assistant");
   if (input) input.focus();
+
+  // Ajuste dinâmico da altura da área de mensagens para evitar que a composer seja empurrada
+  function adjustMessagesHeight() {
+    try {
+      const chat = document.getElementById('chat');
+      const composer = document.getElementById('composer');
+      if (!chat || !messages || !composer) return;
+      // Como a composer é absoluta, definimos o bottom de messages
+      const compH = composer.offsetHeight || 80;
+      // define o espaço inferior que preserva a composer (mensagens rolam por baixo)
+      messages.style.bottom = compH + 'px';
+      // garante que o scroll funcione
+      messages.style.overflowY = 'auto';
+    } catch (e) {
+      // silencioso
+    }
+  }
+
+  window.addEventListener('resize', adjustMessagesHeight);
+  // quando o conteúdo do composer muda (textarea cresce), reajusta
+  try {
+    const composerEl = document.getElementById('composer');
+    const inputEl = document.getElementById('input');
+    if (inputEl) inputEl.addEventListener('input', () => adjustMessagesHeight());
+    if (window.ResizeObserver && composerEl) {
+      const ro = new ResizeObserver(() => adjustMessagesHeight());
+      ro.observe(composerEl);
+    }
+  } catch (e) {}
+  // observa mudanças em messages para ajustar imediatamente e manter scroll
+  try {
+    const mo = new MutationObserver(() => {
+      adjustMessagesHeight();
+      if (messages) messages.scrollTop = messages.scrollHeight;
+    });
+    if (messages) mo.observe(messages, { childList: true });
+  } catch (e) {}
+
+  // ajuste inicial após render
+  setTimeout(adjustMessagesHeight, 60);
 });
 
 /* PAINEL LATERAL DE AÇÕES */
@@ -293,7 +334,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ) {
         img.src = "../images/acss.png";
       } else {
-        img.src = "images/acss.png";
+        img.src = "../images/acss.png";
       }
     } catch (e) {}
     btn.appendChild(img);
@@ -560,7 +601,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const note = document.createElement("div");
     note.className = "privacy-note";
-    note.innerText = "Essa IA é respondida por um modelo da Geminiai";
+    note.innerText = "Essa IA é respondida por um modelo da Gemini";
 
     wrapper.appendChild(close);
     wrapper.appendChild(small);
@@ -585,4 +626,47 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   window.openPrivacyOverlay = openPrivacyOverlay;
+})();
+
+
+(function () {
+  function setupNovoChat() {
+    const novoBtn = document.querySelector('.sidebar-btn[aria-label="Novo Chat"]')
+       Array.from(document.querySelectorAll('.sidebar-btn')).find(b => (b.innerText || '').trim().toLowerCase() === 'novo chat');
+    const mensagensEl = document.getElementById('messages');
+    const inputEl = document.getElementById('input');
+
+    if (!novoBtn || !mensagensEl) return;
+
+    const textoInicial = "Olá! Eu sou o TecBot. Como posso te ajudar?";
+
+    novoBtn.addEventListener('click', (ev) => {
+      ev.preventDefault();
+
+      mensagensEl.innerHTML = '';
+
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'message assistant';
+      const p = document.createElement('p');
+      p.innerText = textoInicial;
+      msgDiv.appendChild(p);
+      mensagensEl.appendChild(msgDiv);
+
+      mensagensEl.scrollTop = mensagensEl.scrollHeight;
+
+      if (inputEl) {
+        inputEl.value = '';
+        if (inputEl.tagName.toLowerCase() === 'textarea') inputEl.rows = 1;
+        inputEl.focus();
+      }
+      try {
+      } catch (e) { }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupNovoChat);
+  } else {
+    setupNovoChat();
+  }
 })();
