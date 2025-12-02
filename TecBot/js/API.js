@@ -1,6 +1,7 @@
 async function getGeminiResponse(text) {
   try {
     const GEMINI_KEY = process.env.GEMINI_KEY;
+
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateText?key=${GEMINI_KEY}`,
       {
@@ -9,9 +10,7 @@ async function getGeminiResponse(text) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          prompt: {
-            text: text,
-          },
+          prompt: { text },
           temperature: 0.7,
           candidateCount: 1,
         }),
