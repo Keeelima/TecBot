@@ -12,26 +12,63 @@ document.addEventListener("DOMContentLoaded", () => {
       .replace(/'/g, "&#39;");
   };
 
-  const renderBoldMarkdown = (str) => {
+  const renderAssistantHTML = (str) => {
     const safe = escapeHtml(str);
-    return safe.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+    let html = safe;
+
+    // Bold: **texto**
+    html = html.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+
+    // Itálico: _texto_ ou *texto* (evita ** já processado)
+    html = html.replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, (m, pre, inner) => pre + "<em>" + inner + "</em>");
+    html = html.replace(/_([^_\n]+)_/g, "<em>$1</em>");
+
+    // Código inline: `code`
+    html = html.replace(/`([^`]+)`/g, "<code>$1</code>");
+
+    // Converter linhas iniciadas com * ou - para marcador • e manter quebras de linha
+    const lines = html.split(/\r?\n/);
+    const formatted = lines.map((line) => {
+      const trimmed = line.trim();
+      if (/^[-*]\s+/.test(trimmed)) return "• " + trimmed.replace(/^[-*]\s+/, "");
+      return trimmed;
+    });
+    html = formatted.join("<br>");
+
+    return html;
+  };
+
+  const applyMathIfAvailable = (el) => {
+    try {
+      if (window.renderMathInElement && el) {
+        window.renderMathInElement(el, {
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false },
+          ],
+          throwOnError: false,
+        });
+      }
+    } catch (e) { }
   };
 
   const addMessage = (text, sender) => {
     const msgDiv = document.createElement("div");
     msgDiv.className = `message ${sender}`;
-    const p = document.createElement("p");
+    const el = document.createElement("p");
     if (sender === "assistant") {
-      p.innerHTML = renderBoldMarkdown(text);
+      el.innerHTML = renderAssistantHTML(text);
     } else {
-      p.innerText = text;
+      el.innerText = text;
     }
-    msgDiv.appendChild(p);
+    msgDiv.appendChild(el);
     messages.appendChild(msgDiv);
     messages.scrollTop = messages.scrollHeight;
     try {
       if (typeof adjustMessagesHeight === "function") adjustMessagesHeight();
     } catch (e) { }
+
+    if (sender === "assistant") applyMathIfAvailable(msgDiv);
   };
 
   // Habilita/Desabilita o composer enquanto aguardamos resposta do bot
@@ -112,11 +149,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (typingDiv) {
       const p = typingDiv.querySelector("p");
-      if (p) p.innerHTML = renderBoldMarkdown(reply);
+      if (p) p.innerHTML = renderAssistantHTML(reply);
       typingDiv.className = "message assistant";
       try {
         setComposerDisabled(false);
       } catch (e) {}
+      applyMathIfAvailable(typingDiv);
     } else {
       addMessage(reply, "assistant");
       try {
