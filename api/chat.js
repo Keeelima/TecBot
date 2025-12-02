@@ -38,7 +38,6 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    // LOG opcional
     console.log("RAW GEMINI ===>", JSON.stringify(data, null, 2));
 
     // Verifica se tem resposta

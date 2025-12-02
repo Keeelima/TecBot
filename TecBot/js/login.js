@@ -1,13 +1,40 @@
 // FUNÇÕES PARA SALVAR E BUSCAR USUÁRIOS
 
-function salvarUsuario(usuario, senha) {
-    const dados = { usuario: usuario, senha: senha };
-    localStorage.setItem("conta", JSON.stringify(dados));
+function getContas() {
+    try {
+        const raw = localStorage.getItem('contas');
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) return parsed;
+        return [];
+    } catch (e) {
+        return [];
+    }
 }
 
-function buscarUsuario() {
-    const dados = localStorage.getItem("conta");
-    return dados ? JSON.parse(dados) : null;
+function saveContas(contas) {
+    try {
+        localStorage.setItem('contas', JSON.stringify(contas));
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+function salvarUsuario(usuario, senha) {
+    const contas = getContas();
+    const cleanUser = (usuario || '').trim();
+    const exists = contas.some(c => (c.usuario || '').toLowerCase() === cleanUser.toLowerCase());
+    if (exists) return { ok: false, message: 'Já existe uma conta com esse nome de usuário.' };
+    contas.push({ usuario: cleanUser, senha: senha });
+    const ok = saveContas(contas);
+    return ok ? { ok: true } : { ok: false, message: 'Erro ao salvar conta.' };
+}
+
+function buscarUsuarioPorNome(usuario) {
+    const contas = getContas();
+    const cleanUser = (usuario || '').trim().toLowerCase();
+    return contas.find(c => (c.usuario || '').toLowerCase() === cleanUser) || null;
 }
 
 // TELA DE LOGIN
@@ -18,24 +45,14 @@ const erroLogin = document.getElementById("erro-login");
 if (formLogin) {
     formLogin.addEventListener("submit", function (event) {
         event.preventDefault();
-
-        const usuarioDigitado = document.getElementById("username").value;
+        const usuarioDigitado = (document.getElementById("username").value || '').trim();
         const senhaDigitada = document.getElementById("password").value;
 
-        const conta = buscarUsuario();
-
-        // LIMPA MENSAGEM ANTERIOR
         if (erroLogin) erroLogin.textContent = "";
 
-        // ERROS ESPECÍFICOS 
-
+        const conta = buscarUsuarioPorNome(usuarioDigitado);
         if (!conta) {
-            if (erroLogin) erroLogin.textContent = "Nenhum usuário cadastrado. Crie uma conta primeiro.";
-            return;
-        }
-
-        if (usuarioDigitado !== conta.usuario) {
-            if (erroLogin) erroLogin.textContent = "Usuário incorreto.";
+            if (erroLogin) erroLogin.textContent = "Usuário não encontrado. Cadastre-se primeiro.";
             return;
         }
 
@@ -44,11 +61,13 @@ if (formLogin) {
             return;
         }
 
-        // LOGIN OK
+        
+        try {
+            localStorage.setItem('current_user', (usuarioDigitado || '').trim());
+        } catch (e) {}
         window.location.href = "/TecBot/home/home.html";
 
 
-        // LIMPA CAMPOS
         const u = document.getElementById("username");
         const p = document.getElementById("password");
         if (u) u.value = "";
@@ -69,14 +88,12 @@ if (formCadastro) {
         const novaSenhaEl = document.getElementById("nova-senha");
         const confirmarSenhaEl = document.getElementById("confirmar-senha");
 
-        const novoUsuario = novoUsuarioEl ? novoUsuarioEl.value : '';
+        const novoUsuario = novoUsuarioEl ? novoUsuarioEl.value.trim() : '';
         const novaSenha = novaSenhaEl ? novaSenhaEl.value : '';
         const confirmarSenha = confirmarSenhaEl ? confirmarSenhaEl.value : '';
 
-        // LIMPA ERRO
         if (erroCadastro) erroCadastro.textContent = "";
 
-        //  VALIDAÇÕES 
 
         if (novoUsuario.length < 3) {
             if (erroCadastro) erroCadastro.textContent = "O usuário deve ter pelo menos 3 caracteres.";
@@ -93,19 +110,21 @@ if (formCadastro) {
             return;
         }
 
-        salvarUsuario(novoUsuario, novaSenha);
+        const res = salvarUsuario(novoUsuario, novaSenha);
+        if (!res.ok) {
+            if (erroCadastro) erroCadastro.textContent = res.message || 'Erro ao cadastrar.';
+            return;
+        }
 
         if (erroCadastro) {
             erroCadastro.style.color = "green";
-            erroCadastro.textContent = "Cadastro realizado com sucesso!";
+            erroCadastro.textContent = "Cadastro realizado com sucesso! Você já pode fazer login.";
         }
 
-        // LIMPA CAMPOS
         if (novoUsuarioEl) novoUsuarioEl.value = "";
         if (novaSenhaEl) novaSenhaEl.value = "";
         if (confirmarSenhaEl) confirmarSenhaEl.value = "";
 
-        // VOLTA AO LOGIN DEPOIS DE 1 SEGUNDO
         setTimeout(() => {
             if (formCadastro) formCadastro.style.display = "none";
             if (formLogin) formLogin.style.display = "block";
@@ -117,7 +136,6 @@ if (formCadastro) {
     });
 }
 
-// BOTÕES DE TROCA ENTRE TELAS
 const abrirCadastroBtn = document.getElementById("abrir-cadastro");
 const voltarLoginBtn = document.getElementById("voltar-login");
 
@@ -143,16 +161,13 @@ function atualizarCorDoBotaoClose() {
 
     if (!btnClose) return;
 
-    // Bootstrap SEMPRE coloca um ícone nativo
-    // ENTÃO usamos filter pra inverter corretamente
     if (tema === "dark") {
-        btnClose.style.filter = "invert(1) brightness(2)";  // X BRANCO
+        btnClose.style.filter = "invert(1) brightness(2)";  
     } else {
-        btnClose.style.filter = "invert(0)";                // X PRETO
+        btnClose.style.filter = "invert(0)";               
     }
 }
 
-// --- TROCA DO TEMA ---
 document.querySelector("[data-action='toggle-theme']")
     .addEventListener("click", () => {
 
@@ -164,6 +179,6 @@ document.querySelector("[data-action='toggle-theme']")
         atualizarCorDoBotaoClose();
     });
 
-// --- QUANDO O MENU ABRIR ---
+
 document.getElementById("menuAcoes")
     .addEventListener("shown.bs.offcanvas", atualizarCorDoBotaoClose);

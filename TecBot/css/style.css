@@ -156,20 +156,19 @@ label{
 	flex-direction: column;
 	padding: 0;
 	min-height: 0;
-	position: relative; /* necessário para posicionar a composer absoluta */
+	position: relative;
 }
 
 .messages {
 	border-radius: 12px;
-	/* posiciona a área de mensagens para ocupar o espaço do chat e rolar internamente */
 	position: absolute;
 	top: 0;
 	left: 0;
 	right: 0;
-	bottom: 0; /* será ajustado dinamicamente pelo JS para liberar espaço à composer */
-	padding: 62px 16px 24px 16px; /* padding-top para espaçamento visual; padding-bottom será ajustado pelo JS */
+	bottom: 0; 
+	padding: 62px 16px 24px 16px;
 	overflow-y: auto;
-	z-index: 5; /* manter abaixo da composer */
+	z-index: 5;
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
@@ -184,7 +183,6 @@ label{
 	padding: 16px 24px;
 	align-items: stretch;
 	flex: 1 1 auto;
-	/* removido overlap negativo para evitar mensagens sobre o cabeçalho */
 	margin-top: 8px;
 }
 
@@ -238,10 +236,44 @@ label{
 	margin: 6px 0;
 	border-radius: 8px;
 	text-align: center;
+	transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+}
+
+.sidebar-btn:hover {
+	background: rgba(255, 255, 255, 0.03);
+	box-shadow: 0 8px 20px var(--hover-shadow);
+	transform: translateY(-2px);
 }
 
 .sidebar-btn:focus {
 	outline: 2px solid var(--primary);
+}
+
+
+.sidebar-btn {
+	position: relative;
+	overflow: hidden;
+	transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+}
+
+.sidebar-btn:active {
+	transform: scale(0.98);
+}
+
+.sidebar-btn .ripple {
+	position: absolute;
+	border-radius: 50%;
+	transform: scale(0);
+	background: rgba(255,255,255,0.08);
+	animation: ripple 520ms cubic-bezier(.2,.7,.2,1);
+	pointer-events: none;
+}
+
+@keyframes ripple {
+	to {
+		transform: scale(3);
+		opacity: 0;
+	}
 }
 
 
@@ -256,7 +288,7 @@ label{
 	align-self: flex-start;
 }
 
-/*Mensagens do Bot */
+
 .message.assistant {
 	background: var(--assistant-bg);
 	color: var(--text);
@@ -264,7 +296,7 @@ label{
 	border-top-left-radius: 6px;
 }
 
-/*Mensagens do Usuário */
+
 .message.user {
 	background: var(--user-bg);
 	color: var(--text);
@@ -287,7 +319,7 @@ label{
 .composer {
 	display: flex;
 	gap: 8px;
-	margin: 0; /* margin zero quando absoluta */
+	margin: 0; 
 	align-items: center;
 	border-top: 2px solid rgba(255, 255, 255, 0.12);
 	position: absolute;
@@ -481,6 +513,26 @@ body.light {
 	background: rgba(204,17,11,0.06);
 }
 
+.current-account {
+	display: block;
+	margin-top: 8px;
+	text-align: center;
+	opacity: 0.98;
+}
+
+.current-account-label {
+	font-size: 0.75rem;
+	color: var(--muted);
+	opacity: 0.95;
+	margin-bottom: 4px;
+}
+
+.current-account-name {
+	font-size: 0.9rem;
+	color: var(--text);
+	font-weight: 600;
+}
+
 
 @media (max-width: 720px) {
 	.action-panel .settings-panel { padding: 16px; margin: 8px; }
@@ -562,17 +614,62 @@ body.light {
 	align-items: center;
 }
 
-.a11y-title { font-size: 1.05rem; margin: 0; }
-.a11y-current { font-size: 1.05rem; color: var(--muted); }
+.a11y-title { 
+	font-size: 
+	1.05rem; 
+	margin: 0; 
+}
+.a11y-current {
+	font-size: 
+	1.05rem; 
+	color: 
+	var(--muted); 
+}
 
-.a11y-controls { display:flex; gap:12px; align-items:center; }
-.a11y-btn { appearance:none; -webkit-appearance:none; border: none; background: var(--card-bg); color: var(--text); padding: 8px 12px; border-radius: 8px; cursor:pointer; font-size: 1rem; display:inline-flex; align-items:center; justify-content:center; }
-.a11y-btn:hover { transform: translateY(-2px); }
-.a11y-btn:active { transform: translateY(0); }
-.a11y-icon { width:20px; height:20px; display:inline-block; }
+.a11y-controls { 
+	display:flex; 
+	gap:12px; 
+	align-items:center; 
+}
+.a11y-btn { 
+	appearance:none; 
+	-webkit-appearance:none; 
+	border: none; 
+	background: 
+	var(--card-bg); 
+	color: var(--text); 
+	padding: 8px 12px; 
+	border-radius: 8px; 
+	cursor:pointer; 
+	font-size: 1rem; 
+	display:inline-flex; 
+	align-items:center; 
+	justify-content:center; 
+}
+.a11y-btn:hover { 
+	transform: 
+	translateY(-2px); 
+}
+.a11y-btn:active { 
+	transform: 
+	translateY(0); 
+}
+.a11y-icon { 
+	width:20px; 
+	height:20px; 
+	display:inline-block; 
+}
 
-/* botão fechar dentro do modal */
-.a11y-close { position: absolute; top: 12px; right: 12px; background: transparent; border: none; color: var(--muted); cursor: pointer; }
+
+.a11y-close { 
+	position: absolute; 
+	top: 12px; 
+	right: 12px; 
+	background: transparent; 
+	border: none; 
+	color: var(--muted); 
+	cursor: pointer; 
+}
 
 @media (max-width: 420px) {
 	.a11y-modal { width: 320px; padding: 14px; }
@@ -612,41 +709,37 @@ body.light {
 	.privacy-modal { width: 320px; }
 }
 
-/* ============================
-   CORREÇÃO DO OFFCANVAS MOBILE
-   ============================ */
 
-/* Fundo do offcanvas */
 #menuAcoes.offcanvas {
     background: var(--canvas-bg, #000) !important;
 }
 
-/* Texto padrão */
+
 #menuAcoes,
 #menuAcoes * {
     color: var(--canvas-text, #fff) !important;
 }
 
-/* Botões dentro do offcanvas */
+
 #menuAcoes .settings-item {
     background: transparent !important;
     border: 1px solid var(--canvas-text, #fff) !important;
     color: var(--canvas-text, #fff) !important;
 }
 
-/* Botão Sair (vermelho) */
+
 #menuAcoes .destructive {
     border-color: #c00 !important;
     color: #c00 !important;
 }
 
-/* HEADER DO OFFCANVAS */
+
 #menuAcoes .offcanvas-header {
     background: transparent !important;
     border-bottom: 1px solid rgba(255,255,255,0.1) !important;
 }
 
-/* FORÇA zero de qualquer filtro estranho que gere o verde */
+
 #menuAcoes,
 #menuAcoes * {
     filter: none !important;
@@ -654,52 +747,45 @@ body.light {
     mix-blend-mode: normal !important;
 }
 #menuAcoes .btn-close {
-    filter: invert(0); /* padrão → preto */
+    filter: invert(0); 
 }
 
 
 
-/* ============================
-   TEMAS AUTOMÁTICOS
-   ============================ */
 
-/* Tema ESCURO → fundo preto, texto branco */
 body.dark #menuAcoes {
     --canvas-bg: #000;
     --canvas-text: #fff;
 }
 
-/* Tema CLARO → fundo branco, texto preto */
+
 body.light #menuAcoes {
     --canvas-bg: #fff;
     --canvas-text: #000;
 }
 
-/* ================================
-   RESPONSIVIDADE LOGIN/CADASTRO
-   ================================ */
 
 .login {
     width: 100%;
-    max-width: 400px;        /* LIMITA A 400px */
-    padding: 35px 25px;      /* REDUZIDO PARA MOBILE */
+    max-width: 400px;        
+    padding: 35px 25px;      
     border-radius: 25px;
     margin: 0 auto;
 }
 
-/* Título responsivo */
+
 .title-login {
     font-size: 1.9rem;
 }
 
-/* Inputs menores */
+
 .input-login {
     padding: 10px 12px;
     font-size: 1rem;
     margin-bottom: 12px;
 }
 
-/* Botão ocupa toda largura */
+
 .btn-login {
     width: 100% !important;
     margin-left: 0 !important;
@@ -707,20 +793,18 @@ body.light #menuAcoes {
     padding: 12px;
 }
 
-/* Link */
+
 .a-login {
     margin-top: 20px;
     font-size: 0.95rem;
 }
 
-/* ================================
-   MOBILE
-   ================================ */
+
 @media (max-width: 480px) {
 
     .login {
         padding: 25px 18px;
-        max-width: 92%;     /* AJUSTA MELHOR NO CELULAR */
+        max-width: 92%;     
     }
 
     .title-login {

@@ -1,5 +1,5 @@
 // Arquivo de API para uso no navegador
-// Chama o backend em /api/chat e retorna apenas o texto da resposta
+// Chama o backend em /api/chat
 (function () {
     async function getGeminiResponse(text) {
         try {
@@ -13,7 +13,7 @@
             const url = new URL("/api/chat", window.location.origin).toString();
 
             const ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
-            const timeoutId = ctrl ? setTimeout(() => ctrl.abort(), 30000) : null; // 30s
+            const timeoutId = ctrl ? setTimeout(() => ctrl.abort(), 30000) : null; 
 
             const res = await fetch(url, {
                 method: "POST",
@@ -49,6 +49,5 @@
         }
     }
 
-    // expõe globalmente para o script principal
     window.getGeminiResponse = getGeminiResponse;
 })();

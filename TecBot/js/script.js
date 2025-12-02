@@ -47,7 +47,6 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (e) {}
   }
 
-  // Resposta simples caso API não funcione
   const getBotReply = (userText) => {
     let response = "Desculpe, não entendi. Sou uma demonstração.";
     const lowerText = userText.trim().toLowerCase();
@@ -68,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     addMessage(userText, "user");
     input.value = "";
-    // após enviar, reset da altura do textarea (se aplicável)
+
     if (input && input.tagName && input.tagName.toLowerCase() === "textarea") {
       try {
         input.style.height = "auto";
@@ -77,7 +76,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     addMessage("Digitando...", "assistant");
     const typingDiv = messages.lastElementChild;
-    // Bloqueia o composer até a resposta do bot chegar
     try {
       setComposerDisabled(true);
     } catch (e) {}
@@ -94,7 +92,6 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Erro ao obter resposta:", err);
     }
 
-    // Atualiza a mensagem do bot e reabilita o composer
     if (typingDiv) {
       const p = typingDiv.querySelector("p");
       if (p) p.innerText = reply;
@@ -117,7 +114,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // Envio pelo formulário
   if (form) {
     form.addEventListener("submit", (event) => {
       event.preventDefault();
@@ -137,52 +133,41 @@ document.addEventListener("DOMContentLoaded", () => {
   addMessage("Olá! Eu sou o TecBot. Como posso te ajudar?", "assistant");
   if (input) input.focus();
 
-  // Ajuste dinâmico da altura da área de mensagens para evitar que a composer seja empurrada
+  //Evita composer ser empurrado pela área de mensagens
   function adjustMessagesHeight() {
     try {
       const chat = document.getElementById("chat");
       const composer = document.getElementById("composer");
       if (!chat || !messages || !composer) return;
-      // Como a composer é absoluta, definimos o bottom de messages
       const compH = composer.offsetHeight || 80;
-      // define o espaço inferior que preserva a composer (mensagens rolam por baixo)
       messages.style.bottom = compH + "px";
-      // garante que o scroll funcione
       messages.style.overflowY = "auto";
     } catch (e) {
-      // silencioso
     }
   }
 
   window.addEventListener("resize", adjustMessagesHeight);
-  // quando o conteúdo do composer muda (textarea cresce), reajusta
   try {
     const composerEl = document.getElementById("composer");
     const inputEl = document.getElementById("input");
 
-    // Auto-resize do textarea: expande um pouco conforme o conteúdo,
-    // respeitando o `max-height` definido no CSS.
+
     function autosizeTextarea() {
       if (!inputEl) return;
       try {
         inputEl.style.height = "auto";
         const computed = window.getComputedStyle(inputEl);
-        // pega max-height definido no CSS (ex: "200px")
         let maxH = parseInt(computed.getPropertyValue("max-height"), 10);
         if (!maxH || Number.isNaN(maxH)) maxH = 200;
-        // alguns paddings podem afetar scrollHeight, usamos scrollHeight
         const newH = Math.min(inputEl.scrollHeight, maxH);
         inputEl.style.height = newH + "px";
       } catch (err) { }
-      // atualiza área de mensagens para não empurrar a composer
       adjustMessagesHeight();
     }
 
     if (inputEl) {
-      // inicializa altura correta
       autosizeTextarea();
       inputEl.addEventListener("input", autosizeTextarea);
-      // também em caso de mudanças de conteúdo programáticas
       const inputMut = new MutationObserver(autosizeTextarea);
       inputMut.observe(inputEl, { characterData: true, childList: true, subtree: true });
     }
@@ -192,7 +177,6 @@ document.addEventListener("DOMContentLoaded", () => {
       ro.observe(composerEl);
     }
   } catch (e) { }
-  // observa mudanças em messages para ajustar imediatamente e manter scroll
   try {
     const mo = new MutationObserver(() => {
       adjustMessagesHeight();
@@ -201,11 +185,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (messages) mo.observe(messages, { childList: true });
   } catch (e) { }
 
-  // ajuste inicial após render
   setTimeout(adjustMessagesHeight, 60);
 });
 
-/* PAINEL LATERAL DE AÇÕES */
+//Side bar
 (function () {
   const btnConfig = document.getElementById("btn-config");
 
@@ -314,6 +297,34 @@ document.addEventListener("DOMContentLoaded", () => {
     panel.scrollIntoView({ behavior: "smooth" });
 
     try {
+      const current = (localStorage.getItem('current_user') || '').toString();
+      if (current) {
+        const logoutBtn = panel.querySelector('[data-action="logout"]');
+        if (logoutBtn) {
+          if (!panel.querySelector('.current-account')) {
+            const container = document.createElement('div');
+            container.className = 'current-account';
+            container.style.marginTop = '8px';
+            container.style.textAlign = 'center';
+
+            const label = document.createElement('div');
+            label.className = 'current-account-label';
+            label.innerText = 'Você está logado como';
+
+            const name = document.createElement('div');
+            name.className = 'current-account-name';
+            name.innerText = current;
+
+            container.appendChild(label);
+            container.appendChild(name);
+
+            if (logoutBtn.parentNode) logoutBtn.parentNode.insertBefore(container, logoutBtn.nextSibling);
+          }
+        }
+      }
+    } catch (e) {}
+
+    try {
       const sidebar =
         document.querySelector("aside.sidebar") ||
         document.querySelector(".sidebar.right");
@@ -371,17 +382,14 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.type = "button";
     btn.className = "floating-accessibility";
 
-    // CRIA UMA ÚNICA IMAGEM
     const img = document.createElement("img");
 
     try {
       const p = window.location.pathname || "";
 
-      // Caminho correto a partir de /TecBot/home/
       img.src = "/TecBot/images/acss.png";
 
 
-      // caso não carregue, mostra no console
       img.onerror = () =>
         console.error("ERRO: imagem não carregou em", img.src);
 
@@ -389,7 +397,6 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Erro ao definir imagem:", e);
     }
 
-    // Adiciona a imagem no botão
     btn.appendChild(img);
 
     btn.addEventListener("click", (e) => e.preventDefault());
@@ -414,7 +421,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (logoutEl) {
         const btn = document.getElementById("floating-accessibility");
         if (btn) btn.classList.add("hidden");
-
+        try { localStorage.removeItem('current_user'); } catch (e) {}
         window.location.href = "../../index.html";
         return;
       }
@@ -424,7 +431,7 @@ document.addEventListener("DOMContentLoaded", () => {
           ? clicked.closest('[data-action="toggle-theme"]')
           : null;
       if (themeEl) {
-        // toggle via centralized function
+
         const isLightNow = document.body.classList.contains("light");
         setTheme(!isLightNow);
         return;
@@ -441,7 +448,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // CHAMADAS CORRETAS (SEM DUPLICAR)
+
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => {
       createFloatingA11yButton();
@@ -451,6 +458,41 @@ document.addEventListener("DOMContentLoaded", () => {
     createFloatingA11yButton();
     setupGlobalActionHandlers();
   }
+})();
+
+// Efeitos (css)
+(function attachSidebarRipple() {
+  function makeRipple(e) {
+    try {
+      const btn = e.currentTarget;
+      const rect = btn.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height) * 1.2;
+      const x = e.clientX - rect.left - size / 2;
+      const y = e.clientY - rect.top - size / 2;
+
+      const span = document.createElement('span');
+      span.className = 'ripple';
+      span.style.width = span.style.height = size + 'px';
+      span.style.left = x + 'px';
+      span.style.top = y + 'px';
+      btn.appendChild(span);
+
+      setTimeout(() => {
+        try { if (span && span.parentNode) span.parentNode.removeChild(span); } catch (err) {}
+      }, 600);
+    } catch (err) {}
+  }
+
+  function init() {
+    const buttons = Array.from(document.querySelectorAll('.sidebar-btn'));
+    buttons.forEach((b) => {
+      b.removeEventListener('click', makeRipple);
+      b.addEventListener('click', makeRipple);
+    });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
 })();
 
 
@@ -683,7 +725,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 (function () {
   function setupNovoChat() {
-    // Seleciona o botão corretamente
     const novoBtn =
       document.querySelector('.sidebar-btn[aria-label="Novo Chat"]') ||
       Array.from(document.querySelectorAll(".sidebar-btn")).find(
@@ -700,7 +741,6 @@ document.addEventListener("DOMContentLoaded", () => {
     novoBtn.addEventListener("click", (ev) => {
       ev.preventDefault();
 
-      // Limpa todas as mensagens
       mensagensEl.innerHTML = "";
 
       // Cria a mensagem inicial do bot
@@ -710,11 +750,8 @@ document.addEventListener("DOMContentLoaded", () => {
       p.innerText = textoInicial;
       msgDiv.appendChild(p);
       mensagensEl.appendChild(msgDiv);
-
-      // Scroll para o final
       mensagensEl.scrollTop = mensagensEl.scrollHeight;
 
-      // Limpa e foca no input
       if (inputEl) {
         inputEl.value = "";
         if (inputEl.tagName.toLowerCase() === "textarea") {
@@ -736,7 +773,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 })();
 
-// --- NOVO CHAT MOBILE ---
+// MOBILE
 (function () {
   function setupNovoChatMobile() {
     const novoBtnMobile = document.querySelector('[data-action="novo-chat"]');
@@ -750,7 +787,6 @@ document.addEventListener("DOMContentLoaded", () => {
     novoBtnMobile.addEventListener("click", (ev) => {
       ev.preventDefault();
 
-      // Limpa todas as mensagens
       mensagensEl.innerHTML = "";
 
       // Adiciona a mensagem inicial do bot
@@ -761,10 +797,8 @@ document.addEventListener("DOMContentLoaded", () => {
       msgDiv.appendChild(p);
       mensagensEl.appendChild(msgDiv);
 
-      // Scroll para o final
       mensagensEl.scrollTop = mensagensEl.scrollHeight;
 
-      // Limpa e foca no input
       if (inputEl) {
         inputEl.value = "";
         if (inputEl.tagName.toLowerCase() === "textarea") {
@@ -775,7 +809,6 @@ document.addEventListener("DOMContentLoaded", () => {
         try { setComposerDisabled(false); } catch (e) {}
       }
 
-      // Fecha o offcanvas automaticamente (Bootstrap)
       const offcanvasEl = document.getElementById("menuAcoes");
       if (offcanvasEl) {
         const bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvasEl);
