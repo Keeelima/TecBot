@@ -3,11 +3,29 @@ document.addEventListener("DOMContentLoaded", () => {
   const input = document.getElementById("input");
   const messages = document.getElementById("messages");
 
+  const escapeHtml = (str) => {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  };
+
+  const renderBoldMarkdown = (str) => {
+    const safe = escapeHtml(str);
+    return safe.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+  };
+
   const addMessage = (text, sender) => {
     const msgDiv = document.createElement("div");
     msgDiv.className = `message ${sender}`;
     const p = document.createElement("p");
-    p.innerText = text;
+    if (sender === "assistant") {
+      p.innerHTML = renderBoldMarkdown(text);
+    } else {
+      p.innerText = text;
+    }
     msgDiv.appendChild(p);
     messages.appendChild(msgDiv);
     messages.scrollTop = messages.scrollHeight;
@@ -94,7 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (typingDiv) {
       const p = typingDiv.querySelector("p");
-      if (p) p.innerText = reply;
+      if (p) p.innerHTML = renderBoldMarkdown(reply);
       typingDiv.className = "message assistant";
       try {
         setComposerDisabled(false);
